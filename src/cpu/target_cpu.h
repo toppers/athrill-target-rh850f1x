@@ -47,6 +47,15 @@
 
 #include "mpu/target/target_mpu_common.h"
 
+#define ATHRILL_TARGET_ARCH	"rh850f1x"
+/*
+ * version: X.Y.Z
+ *  X: generation
+ *  Y: function
+ *  Z: bug fix, small changes
+ */
+#define ATHRILL_TARGET_VERSION "0.A.0"
+
 #define CPU_GREG_NUM			(32U)
 
 #define CPU_COMMON_SYSREG_NUM	(4U)
