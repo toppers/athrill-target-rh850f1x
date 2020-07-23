@@ -1,0 +1,105 @@
+#
+#  TOPPERS athrill
+#      Athrill is a CPU emulator. Athrill was developed to easily
+#      execute and debug embedded programs on virtual microcomputer.
+#
+#  Copyright (C) 2019 by Center for Embedded Computing Systems
+#                Graduate School of Informatics, Nagoya Univ., JAPAN
+#  Copyright (C) 2019 by ESM, Inc.
+#
+#
+#  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
+#  ア（本ソフトウェアを改変したものを含む．以下同じ）を使用・複製・改
+#  変・再配布（以下，利用と呼ぶ）することを無償で許諾する．
+#  (1) 本ソフトウェアをソースコードの形で利用する場合には，上記の著作
+#      権表示，この利用条件および下記の無保証規定が，そのままの形でソー
+#      スコード中に含まれていること．
+#  (2) 本ソフトウェアを，ライブラリ形式など，他のソフトウェア開発に使
+#      用できる形で再配布する場合には，再配布に伴うドキュメント（利用
+#      者マニュアルなど）に，上記の著作権表示，この利用条件および下記
+#      の無保証規定を掲載すること．
+#  (3) 本ソフトウェアを，機器に組み込むなど，他のソフトウェア開発に使
+#      用できない形で再配布する場合には，次のいずれかの条件を満たすこ
+#      と．
+#    (a) 再配布に伴うドキュメント（利用者マニュアルなど）に，上記の著
+#        作権表示，この利用条件および下記の無保証規定を掲載すること．
+#    (b) 再配布の形態を，別に定める方法によって，TOPPERSプロジェクトに
+#        報告すること．
+#  (4) 本ソフトウェアの利用により直接的または間接的に生じるいかなる損
+#      害からも，上記著作権者およびTOPPERSプロジェクトを免責すること．
+#      また，本ソフトウェアのユーザまたはエンドユーザからのいかなる理
+#      由に基づく請求からも，上記著作権者およびTOPPERSプロジェクトを
+#      免責すること．
+#
+#  本ソフトウェアは，無保証で提供されているものである．上記著作権者お
+#  よびTOPPERSプロジェクトは，本ソフトウェアに関して，特定の使用目的
+#  に対する適合性も含めて，いかなる保証も行わない．また，本ソフトウェ
+#  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
+#  の責任を負わない．
+#
+#  $Id$
+#
+include Makefile.env
+
+SRC_ROOT	:=	$(CORE_DIR)/device/peripheral/mros-dev/mros-src
+CAN_DIR		:= $(TARGET_DIR)/device/peripheral/rh850f1k/can
+
+CAN_TARGET	:= libcan.a
+
+IFLAGS	:= -I.
+IFLAGS	+= -I$(CORE_DIR)/inc
+IFLAGS	+= -I$(CORE_DIR)/lib
+IFLAGS	+= -I$(CORE_DIR)/cpu
+IFLAGS	+= -I$(CORE_DIR)/device/mpu
+IFLAGS	+= -I$(CORE_DIR)/device/peripheral/mros-dev/mros-src/os/target/os_asp
+IFLAGS	+= -I$(CORE_DIR)/device/peripheral/mros-dev/mros-athrill/api
+IFLAGS	+= -I$(CORE_DIR)/device/peripheral/mros-dev/mros-athrill/device
+IFLAGS	+= -I$(CORE_DIR)/device/peripheral/mros-dev/mros-athrill/target/os
+IFLAGS	+= -I$(TARGET_DIR)/device
+IFLAGS	+= -I$(TARGET_DIR)/cpu
+IFLAGS	+= -I$(TARGET_DIR)/cpu/config
+IFLAGS	+= -I$(TARGET_DIR)/cpu/mpu/target
+IFLAGS  += -I$(CAN_DIR)
+
+CAN_OBJS := can.o
+CAN_OBJS += can_tx.o
+CAN_OBJS += can_rx.o
+CAN_OBJS += can_buffer.o
+CAN_OBJS += can_fifo.o
+CAN_OBJS += can_mode_global.o
+CAN_OBJS += can_mode_channel.o
+CAN_OBJS += can_register_mapping.o
+CAN_OBJS += can_register_mapping_io_table.o
+CAN_OBJS += can_register_mapping_io_rx_rule.o
+CAN_OBJS += can_register_mapping_io_rx_fifo.o
+CAN_OBJS += can_register_mapping_io_rx_buffer.o
+CAN_OBJS += can_register_mapping_io_global.o
+CAN_OBJS += can_register_mapping_io_channel.o
+CAN_OBJS += can_register_mapping_io_fifo_status.o
+CAN_OBJS += can_register_mapping_io_tx_buffer.o
+CAN_OBJS += can_register_mapping_io_txrx_fifo.o
+CAN_OBJS += can_register_mapping_io_tx_buffer_status.o
+CAN_OBJS += can_register_memory.o
+CAN_OBJS += can_interrupt.o
+CAN_OBJS += can_tx_queue.o
+CAN_OBJS += can_tx_history.o
+CAN_OBJS += can_register_mapping_io_tx_queue.o
+CAN_OBJS += can_register_mapping_io_tx_history.o
+CAN_OBJS += can_bus_impl_ros.o
+
+CFLAGS	:= $(WFLAGS)
+CFLAGS	+= $(IFLAGS)
+
+
+VPATH  := $(CAN_DIR)
+VPATH  += $(CAN_DIR)/mapping
+VPATH  += $(CAN_DIR)/canbus
+
+all: $(CAN_TARGET)
+
+$(CAN_TARGET): $(CAN_OBJS)
+	$(AR)  $(AFLAGS) $(CAN_TARGET) $(CAN_OBJS)
+
+cleanobjs:
+	$(RM) -f $(CAN_OBJS) $(CAN_TARGET) $(CAN_TARGET)
+	
