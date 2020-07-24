@@ -2195,6 +2195,12 @@ static int op_parse_extend_code_1000_00(uint16 code[OP_DECODE_MAX], OperationCod
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( reg3 !=  0 ) && ( value & ( (1U << 20U) ) ) == ( (1U << 20U) )) 
+	{
+		optype->code_id = OpCodeId_CMOVF_D_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( reg3 == 0 ) && ( value & ( (1U << 20U) ) ) == ( (0U << 20U) )) 
 	{
 		optype->code_id = OpCodeId_TRFSR_F;
@@ -2215,6 +2221,12 @@ static int op_parse_extend_code_1000_01(uint16 code[OP_DECODE_MAX], OperationCod
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) ) ) == ( (1U << 20U) )) 
+	{
+		optype->code_id = OpCodeId_CMPF_D_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	else {
 		return -1;
 	}
@@ -2229,9 +2241,21 @@ static int op_parse_extend_code_1000_10(uint16 code[OP_DECODE_MAX], OperationCod
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (1U << 19U) | (0U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_ABSF_D_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (0U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (0U << 0U) )) 
 	{
 		optype->code_id = OpCodeId_CEILF_SL_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CEILF_DL_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
@@ -2241,15 +2265,33 @@ static int op_parse_extend_code_1000_10(uint16 code[OP_DECODE_MAX], OperationCod
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (1U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CEILF_DUL_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (0U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (1U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (0U << 0U) )) 
 	{
 		optype->code_id = OpCodeId_CEILF_SUW_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (1U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CEILF_DUW_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (0U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (0U << 0U) )) 
 	{
 		optype->code_id = OpCodeId_CEILF_SW_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CEILF_DW_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
@@ -2313,6 +2355,54 @@ static int op_parse_extend_code_1000_10(uint16 code[OP_DECODE_MAX], OperationCod
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (1U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_LD_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (1U << 2U) | (0U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_DL_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (1U << 4U) | (0U << 3U) | (1U << 2U) | (0U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_DUL_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (1U << 4U) | (0U << 3U) | (1U << 2U) | (0U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_DUW_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (1U << 2U) | (0U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_DW_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (1U << 17U) | (1U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_ULD_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (1U << 17U) | (1U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_UWD_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (1U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_WD_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (0U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (1U << 0U) )) 
 	{
 		optype->code_id = OpCodeId_FLOORF_SL_F;
@@ -2337,15 +2427,51 @@ static int op_parse_extend_code_1000_10(uint16 code[OP_DECODE_MAX], OperationCod
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_FLOORF_DL_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (1U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_FLOORF_DUL_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (1U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_FLOORF_DUW_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_FLOORF_DW_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (0U << 20U) | (1U << 19U) | (0U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
 	{
 		optype->code_id = OpCodeId_NEGF_S_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (1U << 19U) | (0U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_NEGF_D_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (0U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
 	{
 		optype->code_id = OpCodeId_RECIPF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_RECIPF_D_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
@@ -2379,9 +2505,33 @@ static int op_parse_extend_code_1000_10(uint16 code[OP_DECODE_MAX], OperationCod
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_RSQRTF_D_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (0U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (0U << 0U) )) 
 	{
 		optype->code_id = OpCodeId_SQRTF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_SQRTF_D_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (1U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_DS_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (1U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (1U << 1U) | (0U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_CVTF_SD_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
@@ -2406,6 +2556,30 @@ static int op_parse_extend_code_1000_10(uint16 code[OP_DECODE_MAX], OperationCod
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (0U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
 	{
 		optype->code_id = OpCodeId_TRNCF_SW_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_TRNCF_DL_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) | (1U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_TRNCF_DUL_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (1U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_TRNCF_DUW_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) | (1U << 4U) | (1U << 3U) | (1U << 2U) | (1U << 1U) | (1U << 0U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) | (0U << 4U) | (0U << 3U) | (0U << 2U) | (0U << 1U) | (1U << 0U) )) 
+	{
+		optype->code_id = OpCodeId_TRNCF_DW_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
@@ -2435,9 +2609,21 @@ static int op_parse_extend_code_1000_11(uint16 code[OP_DECODE_MAX], OperationCod
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (0U << 17U) )) 
+	{
+		optype->code_id = OpCodeId_ADDF_D_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) ) ) == ( (0U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) )) 
 	{
 		optype->code_id = OpCodeId_DIVF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) ) ) == ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) )) 
+	{
+		optype->code_id = OpCodeId_DIVF_D_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
@@ -2447,9 +2633,21 @@ static int op_parse_extend_code_1000_11(uint16 code[OP_DECODE_MAX], OperationCod
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) ) ) == ( (1U << 20U) | (1U << 19U) | (0U << 18U) | (0U << 17U) )) 
+	{
+		optype->code_id = OpCodeId_MAXF_D_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) ) ) == ( (0U << 20U) | (1U << 19U) | (0U << 18U) | (1U << 17U) )) 
 	{
 		optype->code_id = OpCodeId_MINF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) ) ) == ( (1U << 20U) | (1U << 19U) | (0U << 18U) | (1U << 17U) )) 
+	{
+		optype->code_id = OpCodeId_MINF_D_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
@@ -2462,6 +2660,18 @@ static int op_parse_extend_code_1000_11(uint16 code[OP_DECODE_MAX], OperationCod
 	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) ) ) == ( (0U << 20U) | (0U << 19U) | (0U << 18U) | (1U << 17U) )) 
 	{
 		optype->code_id = OpCodeId_SUBF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) ) ) == ( (1U << 20U) | (0U << 19U) | (0U << 18U) | (1U << 17U) )) 
+	{
+		optype->code_id = OpCodeId_SUBF_D_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	if (( value & ( (1U << 20U) | (1U << 19U) | (1U << 18U) | (1U << 17U) ) ) == ( (1U << 20U) | (0U << 19U) | (1U << 18U) | (0U << 17U) )) 
+	{
+		optype->code_id = OpCodeId_MULF_D_F;
 		optype->format_id = OP_CODE_FORMAT_F;
 		return 0;
 	}
@@ -2525,42 +2735,106 @@ static int op_parse_extend_code_1001_11(uint16 code[OP_DECODE_MAX], OperationCod
 
 static int op_parse_extend_code_1010_00(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_MADDF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1010_01(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_MSUBF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1010_10(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_NMADDF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1010_11(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_NMSUBF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1011_00(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_MADDF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1011_01(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_MSUBF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1011_10(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_NMADDF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1011_11(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
 {
-	return -1;
+	if (TRUE) 
+	{
+		optype->code_id = OpCodeId_NMSUBF_S_F;
+		optype->format_id = OP_CODE_FORMAT_F;
+		return 0;
+	}
+	else {
+		return -1;
+	}
 }
 
 static int op_parse_extend_code_1100_00(uint16 code[OP_DECODE_MAX], OperationCodeType *optype)
