@@ -40,6 +40,7 @@
 #  $Id$
 #
 
+#The following files are based on v850e2m(https://github.com/toppers/athrill-target-v850e2m).
 
 OBJS	+=	op_exec_arithm.o
 OBJS	+=	op_exec_bit.o
