@@ -77,7 +77,6 @@ build_all:
 	make -f $(CORE_MKDIR)/Makefile.main all
 	make -f $(CORE_MKDIR)/Makefile.cui all
 	make -f $(TARGET_MKDIR)/Makefile.cpu all
-	make -f $(TARGET_MKDIR)/Makefile.fpu all
 	make -f $(TARGET_MKDIR)/Makefile.device all
 	make -f $(CORE_MKDIR)/Makefile.bus all
 	make -f $(CORE_MKDIR)/Makefile.loader all
