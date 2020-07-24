@@ -39,131 +39,65 @@
  *
  *  $Id$
  */
+#include <stdlib.h>
+
 #include "cpu_exec/op_exec_ops.h"
 #include "cpu.h"
 #include "bus.h"
-#include "device.h"
-#include <stdio.h> //TODO
 
+#include "device.h"
 #include "target_mpu_op.h"
 
-int op_exec_halt(TargetCoreType *cpu)
+int op_exec_st_dw_14(TargetCoreType *cpu)
 {
-	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: HALT:0x%x\n", cpu->reg.pc, cpu->reg.pc + 4));
-	//printf("0x%x: HALT:0x%x\n", cpu->reg.pc, cpu->reg.pc + 4);
-	//fflush(stdout);
-	cpu->is_halt = TRUE;
-	cpu->reg.pc += 4;
-	return 0;
-}
-
-int op_exec_switch(TargetCoreType *cpu)
-{
-	uint32 reg1 = cpu->decoded_code->type1.reg1;
-	uint32 reg1_data;
 	uint32 addr;
-	sint32 tmp_pc;
-	uint32 next_pc;
-	sint16 data16;
+	sint32 disp;
+	uint32 reg1 = cpu->decoded_code->type14.reg1;
+	uint32 reg3 = cpu->decoded_code->type14.reg3;
+	uint32 reg3plus1 = reg3 + 1;
 	Std_ReturnType err;
+	bool has_permission;
 
 	if (reg1 >= CPU_GREG_NUM) {
 		return -1;
 	}
-
-	reg1_data = cpu->reg.r[reg1];
-
-	addr = (cpu->reg.pc + 2U) + (reg1_data << 1U);
-	/*
-	 * Load-memory (adr, Half-word)
-	 */
-	err = bus_get_data16(cpu->core_id, addr, (uint16*)&data16);
-	if (err != STD_E_OK) {
-		printf("ERROR:SWITCH pc=0x%x reg1=%u(0x%x) addr=0x%x\n", cpu->reg.pc, reg1, reg1_data, addr);
+	if (reg3 >= CPU_GREG_NUM) {
 		return -1;
 	}
-	/*
-	 * (sign-extend (Load-memory (adr, Half-word) ))
-	 */
-	tmp_pc = (sint32)( data16 );
-	/*
-	 * (sign-extend (Load-memory (adr, Half-word) ) ) logically shift left by 1
-	 */
-	tmp_pc <<= 1U;
-
-	/*
-	 * (PC + 2) + (sign-extend (Load-memory (adr, Half-word) ) ) logically shift left by 1
-	 */
-	next_pc = (cpu->reg.pc + 2U) + ((uint32)tmp_pc);
-
-	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: SWITCH r%d(%d):%d\n", cpu->reg.pc, reg1, cpu->reg.r[reg1], next_pc));
-
-
-
-	cpu->reg.pc = next_pc;
-	return 0;
-}
-
-/*
- * ［命令形式］ CAXI [reg1], reg2, reg3
- *
- * ［オペレーション］ adr ← GR[reg1]注
- * token ← Load-memory(adr, Word)
- * result ← GR[reg2] – token
- * If result == 0
- * then Store-memory(adr, GR[reg3],Word)
- * GR[reg3] ← token
- * else Store-memory(adr, token,Word)
- * GR[reg3] ← token
- * 注 GR[reg1]の下位 2 ビットは， 0 にマスクしadr とします。
- */
-int op_exec_caxi(TargetCoreType *cpu)
-{
-	Std_ReturnType err;
-	uint16 reg1 = cpu->decoded_code->type11.reg1;;
-	uint16 reg2 = cpu->decoded_code->type11.reg2;
-	uint16 reg3 = cpu->decoded_code->type11.reg3;
-	sint16 token;
-	sint16 result;
-	uint16 put_data;
-
-	uint32 reg1_addr = (cpu->reg.r[reg1] & 0xFFFFFFFC);
-	uint32 reg2_data = cpu->reg.r[reg2];
-	uint32 reg3_data = cpu->reg.r[reg3];
-
-	/*
-	 * Load-memory (adr, Half-word)
-	 */
-	err = bus_get_data16(cpu->core_id, reg1_addr, (uint16*)&token);
-	if (err != STD_E_OK) {
-		printf("ERROR:CAXI pc=0x%x reg1=%u reg1_addr=%d\n", cpu->reg.pc, reg1, reg1_addr);
+	if ((reg3 % 2) != 0) {
 		return -1;
 	}
 
-	result = reg2_data - token;
-	if (result == 0) {
-		put_data = (uint16)reg3_data;
+	disp = op_sign_extend(22, (cpu->decoded_code->type14.disp_high << 7U) | cpu->decoded_code->type14.disp_low);
+	addr = cpu->reg.r[reg1] + disp;
+	if ((reg1 == CPU_REG_SP) && cpu_may_store_on_stack_overflow(cpu->reg.r[reg1], disp) == TRUE) {
+		printf("ERROR: found stack overflow\n");
+		return -1;
 	}
-	else {
-		put_data = (uint16)token;
+
+	has_permission = target_mpu_has_permission(cpu, MPU_TARGET_ACCESS_WRITE, addr, 8U);
+	if (!(has_permission)) {
+		return -1;
 	}
-	err = bus_put_data16(cpu->core_id, reg1_addr, put_data);
+
+	err = bus_put_data32(cpu->core_id, addr, (sint32)cpu->reg.r[reg3]);
 	if (err != STD_E_OK) {
 		return -1;
 	}
-	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: CAXI r%d(%d),r%d(0x%x), r%d(0x%x):token=0x%x store=0x%x\n",
-			cpu->reg.pc, reg1, cpu->reg.r[reg1], reg2, cpu->reg.r[reg2], reg3, cpu->reg.r[reg3], token, put_data));
+	err = bus_put_data32(cpu->core_id, (addr + 4U), (sint32)cpu->reg.r[reg3plus1]);
+	if (err != STD_E_OK) {
+		return -1;
+	}
 
-	cpu->reg.r[reg3] = (sint32)((uint32)((uint16)token));
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: ST.W r%d(0x%x), disp23(%d) r%d(0x%x):0x%x 0x%x\n",
+			cpu->reg.pc,
+			reg3, cpu->reg.r[reg3],
+			disp,
+			reg1, cpu->reg.r[reg1],
+			(sint32)cpu->reg.r[reg3],
+			(sint32)cpu->reg.r[reg3plus1]));
 
-	op_chk_and_set_borrow(&cpu->reg, reg2_data, token);
-	op_chk_and_set_overflow(&cpu->reg, reg2_data, -token);
-	op_chk_and_set_zero(&cpu->reg, result);
-	op_chk_and_set_sign(&cpu->reg, result);
-
-
-	cpu->reg.pc += 4;
-
+	cpu->reg.pc += 6;
 	return 0;
 }
 

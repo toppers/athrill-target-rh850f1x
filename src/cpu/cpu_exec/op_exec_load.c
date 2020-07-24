@@ -488,57 +488,6 @@ int op_exec_ld_w_14(TargetCoreType *cpu)
 	return 0;
 }
 
-int op_exec_ld_dw_14(TargetCoreType *cpu)
-{
-	uint32 addr;
-	sint32 disp;
-	uint32 reg1 = cpu->decoded_code->type14.reg1;
-	uint32 reg3 = cpu->decoded_code->type14.reg3;
-	sint32 data32[2];
-	Std_ReturnType err;
-
-	bool has_permission;
-
-
-	if (reg1 >= CPU_GREG_NUM) {
-		return -1;
-	}
-	if (reg3 >= CPU_GREG_NUM) {
-		return -1;
-	}
-	if ((reg3 % 2) != 0) {
-		return -1;
-	}
-
-	disp = op_sign_extend(22, (cpu->decoded_code->type14.disp_high << 7U) | cpu->decoded_code->type14.disp_low);
-
-	addr = cpu->reg.r[reg1] + disp;
-
-	has_permission = target_mpu_has_permission(cpu, MPU_TARGET_ACCESS_READ, addr, 8U);
-	if (!(has_permission)) {
-		return -1;
-	}
-
-	err = bus_get_data32(cpu->core_id, addr, (uint32*)&data32[0]);
-	if (err != STD_E_OK) {
-		return -1;
-	}
-	err = bus_get_data32(cpu->core_id, addr, (uint32*)&data32[1]);
-	if (err != STD_E_OK) {
-		return -1;
-	}
-	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: LD.DW disp23(%d),r%d(0x%x), r%d(0x%x):0x%x 0x%x\n",
-			cpu->reg.pc,
-			disp, reg1, cpu->reg.r[reg1],
-			reg3, cpu->reg.r[reg3],
-			data32[0], data32[1]));
-
-	cpu->reg.r[reg3 + 0] = data32[0];
-	cpu->reg.r[reg3 + 1] = data32[1];
-
-	cpu->reg.pc += 6;
-	return 0;
-}
 
 int op_exec_ldhu(TargetCoreType *cpu)
 {
