@@ -448,7 +448,7 @@ static void intc_hook_update_ic_upperbit(CoreIdType coreId, uint32 regaddr, uint
 			/* INTC_IC2 */
 			intno = INTC2_ICADDR2INTNO(regaddr);
 		}
-		intc_cpu_trigger_interrupt(coreId, intno);
+		intc_raise_intr(intno);
 	}
 	else {
 		/* req clr */
