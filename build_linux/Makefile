@@ -44,7 +44,6 @@ include Makefile.env
 
 LIBCUI		:= libcui.a
 LIBCPU		:= libcpu.a
-LIBFPU		:= libfpu.a
 LIBCAN		:= libcan.a
 LIBDEVICE	:= libdevice.a
 LIBBUS		:= libbus.a
@@ -97,9 +96,6 @@ $(LIBCUI):
 $(LIBCPU): 
 	make -f $(TARGET_MKDIR)/Makefile.cpu all
 
-$(LIBFPU): 
-	make -f $(TARGET_MKDIR)/Makefile.fpu all
-
 $(LIBDEVICE): 
 	make -f $(TARGET_MKDIR)/Makefile.device all
 
@@ -120,7 +116,6 @@ $(LIBMROS):
 
 clean:
 	make -f $(TARGET_MKDIR)/Makefile.cpu clean
-	make -f $(TARGET_MKDIR)/Makefile.fpu clean
 	make -f $(TARGET_MKDIR)/Makefile.device clean
 	make -f $(CORE_MKDIR)/Makefile.bus clean
 	make -f $(CORE_MKDIR)/Makefile.cui clean

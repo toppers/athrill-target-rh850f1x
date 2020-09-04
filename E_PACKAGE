@@ -1,0 +1,7 @@
+E_PACKAGE athrill-target-rh850f1x
+VERSION %date
+
+INCLUDE MANIFEST
+INCLUDE ../athrill/MANIFEST
+
+build_linux/athrill2
