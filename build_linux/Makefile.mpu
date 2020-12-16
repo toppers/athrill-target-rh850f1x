@@ -52,6 +52,7 @@ IFLAGS	+= -I$(CORE_DIR)/lib/dwarf/data_type
 IFLAGS	+= -I$(CORE_DIR)/cpu
 IFLAGS	+= -I$(TARGET_DIR)/cpu
 IFLAGS	+= -I$(TARGET_DIR)/cpu/config
+IFLAGS  += -I$(CORE_DIR)/device/peripheral/serial/fifo
 
 VPATH	:=	$(CORE_DIR)/device/mpu
 VPATH	+=	$(CORE_DIR)/device/mpu/loader
