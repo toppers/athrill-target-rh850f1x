@@ -256,7 +256,7 @@ static ExceptionRequestEntryType* judge_pending_Exception(CoreIdType coreId)
 
 	candidate = intc_control[coreId].current_exception;
 	if (candidate != NULL) {
-		ASSERT(candidate->data.status == ExceptionRequestStatus_RUNNING);
+		//ASSERT(candidate->data.status == ExceptionRequestStatus_RUNNING);
 		DBG_PRINTF(("%s(): already raised exception:exno=%u intno=%u\n", __FUNCTION__, candidate->data.exno, candidate->data.intno));
 		current_level = intc_control_register_op.get_exception_priority_level(coreId, candidate->data.exno);
 		mindegree = candidate->data.priority_degree;
@@ -308,7 +308,7 @@ static ExceptionRequestEntryType* judge_pending_Exception(CoreIdType coreId)
 		 * 多重割り込みが発生したので，既存のものはWAITING状態にし，新規割り込みを発生させる
 		 */
 		intc_control[coreId].current_exception->data.status = ExceptionRequestStatus_WAITING;
-		intc_control[coreId].current_exception = NULL;
+		//intc_control[coreId].current_exception = NULL;
 		DBG_PRINTF(("%s(): raise multi  exp=0x%x\n", __FUNCTION__, candidate));
 	}
 
