@@ -80,7 +80,10 @@ void device_supply_clock_intc(DeviceClockType *dev_clock)
 	CoreIdType coreId_num = CPU_CONFIG_GET_CORE_ID_NUM();
 	ExceptionRequestEntryType *exception;
 
+#ifndef CPUEMU_CLOCK_BUG_FIX
 	dev_clock->clock++;
+#else
+#endif /* CPUEMU_CLOCK_BUG_FIX */
 
 	for (coreId = 0; coreId < coreId_num; coreId++) {
 		judge_pending_UserIntr(coreId);

@@ -165,6 +165,7 @@ static void device_timer_do_calc_min_interval(DeviceClockType *device, int n, in
 	return;
 }
 
+#ifndef CPUEMU_CLOCK_BUG_FIX
 #define INLINE_device_supply_clock_timer(dev_clock, n, ch)	\
 do {	\
 	if ((dev_clock->clock % TimerDevice[n][ch].fd) == 0) {	\
@@ -175,6 +176,15 @@ do {	\
 		dev_clock->can_skip_clock = FALSE;	\
 	}	\
 } while(0)
+#else
+#define INLINE_device_supply_clock_timer(dev_clock, n, ch)	\
+do {	\
+	if ((dev_clock->clock % TimerDevice[n][ch].fd) == 0) {	\
+		device_timer_do_update(dev_clock, n, ch);	\
+		device_timer_do_calc_min_interval(dev_clock, n, ch);	\
+	}	\
+} while(0)
+#endif
 
 void device_supply_clock_timer(DeviceClockType *dev_clock)
 {
