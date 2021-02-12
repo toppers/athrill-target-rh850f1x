@@ -452,6 +452,7 @@ static void intc_hook_update_ic_upperbit(CoreIdType coreId, uint32 regaddr, uint
 	}
 	else {
 		/* req clr */
+#ifndef FIX_INTR_CPU_RCV_CLR
 		{
 			ListEntry_Foreach(&intc_control[coreId].user_queue.pending, req) {
 				ino_regaddr= IC_ADDRESS(req->data.intno);
@@ -472,6 +473,35 @@ static void intc_hook_update_ic_upperbit(CoreIdType coreId, uint32 regaddr, uint
 				}
 			}
 		}
+#else
+		//printf("intc_hook_update_ic_upperbit:addr=0x%x\n", regaddr);
+		{
+			ListEntry_Foreach(&intc_control[coreId].user_queue.pending, req) {
+				//printf("intc_hook_update_ic_upperbit:user:found intno=%d\n", req->data.intno);
+				ino_regaddr= IC_ADDRESS(req->data.intno);
+				if ((ino_regaddr == regaddr)) {
+					ListEntry_RemoveEntry(&intc_control[coreId].user_queue.pending, req);
+					ListEntry_Free(&intc_control[coreId].user_queue.pending, req);
+					//printf("intc_hook_update_ic_upperbit:user:deleted intno=%d\n", req->data.intno);
+					break;
+				}
+			}
+		}
+		IntcPriorityLevelType level;
+		for (level = IntcPriorityLevel_0; level < IntcPriorityLevel_Num; level++)
+		{
+			ListEntry_Foreach(&intc_control[coreId].exception_queue[level].pending, req) {
+				ino_regaddr= IC_ADDRESS(req->data.intno);
+				//printf("intc_hook_update_ic_upperbit:exception:found intno=%d status=%d\n", req->data.intno, req->data.status);
+				if ((ino_regaddr == regaddr) && req->data.status == ExceptionRequestStatus_RUNNABLE) {
+					ListEntry_RemoveEntry(&intc_control[coreId].exception_queue[level].pending, req);
+					ListEntry_Free(&intc_control[coreId].exception_queue[level].pending, req);
+					//printf("intc_hook_update_ic_upperbit:exception:deleted intno=%d\n", req->data.intno);
+					return;
+				}
+			}
+		}
+#endif /* FIX_INTR_CPU_RCV_CLR */
 	}
 }
 
