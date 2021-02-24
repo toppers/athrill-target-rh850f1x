@@ -156,7 +156,15 @@ static void device_timer_do_calc_min_interval(DeviceClockType *device, int n, in
 		return;
 	}
 
+#ifndef CPUEMU_CLOCK_BUG_FIX
 	interval = (timer->compare0 - timer->cnt) * timer->fd;
+#else
+	{
+		uint64 cnt_1 = (timer->cnt / timer->fd);
+		uint64 cnt_2 = (timer->cnt % timer->fd);
+		interval = ((timer->compare0 - cnt_1) * timer->fd) + cnt_2;
+	}
+#endif
 
 	if ((interval > 0) && (interval < device->min_intr_interval)) {
 		device->min_intr_interval = interval;
@@ -181,6 +189,8 @@ do {	\
 do {	\
 	if ((dev_clock->clock % TimerDevice[n][ch].fd) == 0) {	\
 		device_timer_do_update(dev_clock, n, ch);	\
+	}	\
+	else if ((dev_clock)->is_halt == TRUE) {	\
 		device_timer_do_calc_min_interval(dev_clock, n, ch);	\
 	}	\
 } while(0)
