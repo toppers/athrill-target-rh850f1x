@@ -149,6 +149,7 @@ static void device_timer_do_calc_min_interval(DeviceClockType *device, int n, in
 	TimerDeviceType *timer = &(TimerDevice[n][ch]);
 	uint64 interval;
 
+#ifndef CPUEMU_CLOCK_BUG_FIX
 	if (device->can_skip_clock == FALSE) {
 		return;
 	}
@@ -156,20 +157,26 @@ static void device_timer_do_calc_min_interval(DeviceClockType *device, int n, in
 		return;
 	}
 
-#ifndef CPUEMU_CLOCK_BUG_FIX
 	interval = (timer->compare0 - timer->cnt) * timer->fd;
-#else
-	{
-		uint64 cnt_1 = (timer->cnt / timer->fd);
-		uint64 cnt_2 = (timer->cnt % timer->fd);
-		interval = ((timer->compare0 - cnt_1) * timer->fd) + cnt_2;
-	}
-#endif
 
 	if ((interval > 0) && (interval < device->min_intr_interval)) {
 		device->min_intr_interval = interval;
 		//printf("TIMER clock=%I64u min=%I64u\n", device->clock, device->min_intr_interval);
 	}
+#else
+	uint64 cnt_1 = (device->clock - timer->start_clock);
+	uint64 compare_value = (((uint64)timer->compare0) * ((uint64)timer->fd));
+	interval = (compare_value - cnt_1);
+	//printf("TIMER compare_value=%llu clock=%llu start_clock=%llu cnt_1=%llu interval=%llu\n", compare_value, device->clock, timer->start_clock, cnt_1, interval);
+
+	if (interval < device->min_intr_interval) {
+		if (interval == 0) {
+			interval = 1;
+		}
+		device->min_intr_interval = interval;
+		//printf("TIMER clock=%llu min=%llu\n", device->clock, device->min_intr_interval);
+	}
+#endif
 	return;
 }
 
@@ -190,7 +197,7 @@ do {	\
 	if ((dev_clock->clock % TimerDevice[n][ch].fd) == 0) {	\
 		device_timer_do_update(dev_clock, n, ch);	\
 	}	\
-	else if ((dev_clock)->is_halt == TRUE) {	\
+	if ((dev_clock)->is_halt == TRUE) {	\
 		device_timer_do_calc_min_interval(dev_clock, n, ch);	\
 	}	\
 } while(0)
