@@ -166,7 +166,12 @@ static void device_timer_do_calc_min_interval(DeviceClockType *device, int n, in
 #else
 	uint64 cnt_1 = (device->clock - timer->start_clock);
 	uint64 compare_value = (((uint64)timer->compare0) * ((uint64)timer->fd));
-	interval = (compare_value - cnt_1);
+	if (cnt_1 <= compare_value) {
+		interval = (compare_value - cnt_1);
+	}
+	else {
+		interval = 1;
+	}
 	//printf("TIMER compare_value=%llu clock=%llu start_clock=%llu cnt_1=%llu interval=%llu\n", compare_value, device->clock, timer->start_clock, cnt_1, interval);
 
 	if (interval < device->min_intr_interval) {
