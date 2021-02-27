@@ -202,7 +202,7 @@ do {	\
 	if ((dev_clock->clock % TimerDevice[n][ch].fd) == 0) {	\
 		device_timer_do_update(dev_clock, n, ch);	\
 	}	\
-	if ((dev_clock)->is_halt == TRUE) {	\
+	if (((dev_clock)->is_halt == TRUE) && (TimerDevice[n][ch].state != TIMER_STATE_STOP)) {	\
 		device_timer_do_calc_min_interval(dev_clock, n, ch);	\
 	}	\
 } while(0)
