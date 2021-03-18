@@ -118,7 +118,6 @@ int intc_raise_exception(CoreIdType coreId, ExceptionIdType exno)
 	req->data.exno = exno;
 	req->data.intno = 0;
 	req->data.priority_degree = intc_control_register_op.get_exception_priority_degree(coreId, exno, 0);
-	req->data.is_user = FALSE;
 	ListEntry_AddEntry(&intc_control[coreId].exception_queue[level].pending, req);
 	intc_control[coreId].cpu->is_halt = FALSE;
 
@@ -277,7 +276,7 @@ static ExceptionRequestEntryType* judge_pending_Exception(CoreIdType coreId)
 		 */
 		ListEntry_Foreach(&intc_control[coreId].exception_queue[level].pending, req) {
 #ifdef USER_INTR_PMR_BUGFIX
-			if (req->data.is_user == TRUE) {
+			if (req->data.exno == ExceptionId_UserIntr) {
 				if (is_cpu_mask_UserIntr(req) == TRUE) {
 					continue;
 				}
@@ -328,7 +327,7 @@ static ExceptionRequestEntryType* judge_pending_Exception(CoreIdType coreId)
 		candidate->data.status = ExceptionRequestStatus_RUNNING;
 		intc_control[coreId].current_exception = candidate;
 #ifdef USER_INTR_PMR_BUGFIX
-		if (candidate->data.is_user == TRUE) {
+		if (candidate->data.exno == ExceptionId_UserIntr) {
 			intc_control_register_op.set_user_intr_state_priority_degree_masked(candidate->data.coreId, FALSE);
 		}
 #endif /* USER_INTR_PMR_BUGFIX */

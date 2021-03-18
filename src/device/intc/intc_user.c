@@ -143,7 +143,6 @@ static void common_raise_user_intr(uint32 intno, uint32 coreId)
 	req->data.exno = ExceptionId_UserIntr;
 	req->data.intno = intno;
 	req->data.priority_degree = intc_control_register_op.get_exception_priority_degree(coreId, ExceptionId_UserIntr, intno);
-	req->data.is_user = TRUE;
 	ListEntry_AddEntry(&intc_control[coreId].user_queue.pending, req);
 
 	intc_control_register_op.set_user_intr_reqflag(req->data.coreId, req->data.intno, TRUE);
@@ -196,12 +195,7 @@ std_bool is_cpu_mask_UserIntr(ExceptionRequestEntryType *candidate)
 	/*
 	 * current priority check
 	 */
-	IntcPriorityDegreeType curr_level = intc_control_register_op.get_current_user_intr_priority_degree(candidate->data.coreId);
 	IntcPriorityDegreeType intr_level = intc_control_register_op.get_user_intr_priority_degree(candidate->data.coreId, candidate->data.intno);
-
-	if (curr_level <= intr_level) {
-		return TRUE;
-	}
 
 	/*
 	 * mask priority check
@@ -252,7 +246,6 @@ static void judge_cpu_mask_UserIntr(ExceptionRequestEntryType *candidate)
 	ExceptionRequestEntryType *exception;
 	ListEntry_Alloc(&intc_control[candidate->data.coreId].exception_queue[level].pending, ExceptionRequestEntryType, &exception);
 	exception->data = candidate->data;
-	exception->data.is_user = TRUE;
 	ListEntry_AddEntry(&intc_control[candidate->data.coreId].exception_queue[level].pending, exception);
 	DBG_PRINTF(("%s() RAISED: level=%u mask_level = %u intr_level = %u req_num=%u\n", __FUNCTION__, level, mask_level, intr_level, intc_control[candidate->data.coreId].exception_queue[level].pending.entry_num));
 	return;
