@@ -61,6 +61,7 @@ typedef struct {
 	uint32						exno;
 	uint32						intno; // for EIINTn
 	uint32						priority_degree;
+	std_bool					is_user;
 } ExceptionRequestDataType;
 
 typedef ListEntryType(ExceptionRequestEntryType, ExceptionRequestDataType) ExceptionRequestEntryType;

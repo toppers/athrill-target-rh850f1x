@@ -47,5 +47,6 @@
 extern void device_init_intc_UserIntr(CoreIdType coreId);
 extern void judge_pending_UserIntr(CoreIdType coreId);
 extern void hook_UserIntr_Raised(const ExceptionRequestEntryType *exception);
+extern std_bool is_cpu_mask_UserIntr(ExceptionRequestEntryType *candidate);
 
 #endif /* _INTC_USER_H_ */

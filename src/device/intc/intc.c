@@ -118,6 +118,7 @@ int intc_raise_exception(CoreIdType coreId, ExceptionIdType exno)
 	req->data.exno = exno;
 	req->data.intno = 0;
 	req->data.priority_degree = intc_control_register_op.get_exception_priority_degree(coreId, exno, 0);
+	req->data.is_user = FALSE;
 	ListEntry_AddEntry(&intc_control[coreId].exception_queue[level].pending, req);
 	intc_control[coreId].cpu->is_halt = FALSE;
 
@@ -275,6 +276,13 @@ static ExceptionRequestEntryType* judge_pending_Exception(CoreIdType coreId)
 		 * すでに実行中の例外よりも新規のものの方が高ければ，検索する．
 		 */
 		ListEntry_Foreach(&intc_control[coreId].exception_queue[level].pending, req) {
+#ifdef USER_INTR_PMR_BUGFIX
+			if (req->data.is_user == TRUE) {
+				if (is_cpu_mask_UserIntr(req) == TRUE) {
+					continue;
+				}
+			}
+#endif /* USER_INTR_PMR_BUGFIX */
 			tmpdgree = req->data.priority_degree;
 			DBG_PRINTF(("tmpdgree=0x%x mindegree=0x%x\n", tmpdgree, tmpdgree));
 			if (tmpdgree < mindegree) {
@@ -319,6 +327,11 @@ static ExceptionRequestEntryType* judge_pending_Exception(CoreIdType coreId)
 		DBG_PRINTF(("%s(): raise exp=0x%x\n", __FUNCTION__, candidate));
 		candidate->data.status = ExceptionRequestStatus_RUNNING;
 		intc_control[coreId].current_exception = candidate;
+#ifdef USER_INTR_PMR_BUGFIX
+		if (candidate->data.is_user == TRUE) {
+			intc_control_register_op.set_user_intr_state_priority_degree_masked(candidate->data.coreId, FALSE);
+		}
+#endif /* USER_INTR_PMR_BUGFIX */
 		return candidate;
 	}
 	else {
