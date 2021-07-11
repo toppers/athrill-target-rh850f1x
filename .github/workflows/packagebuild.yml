@@ -27,7 +27,7 @@ jobs:
           git clone https://github.com/mitsut/toppers_utils.git
           perl toppers_utils/makerelease E_PACKAGE
           FILE_NAME="$(ls -1 RELEASE/ | sed -n 1p)"
-          echo ::set-output name=$FILE_NAME
+          echo ::set-output name=FILE_NAME::${FILE_NAME}
 
       - name: Get the version
         id: get_version
