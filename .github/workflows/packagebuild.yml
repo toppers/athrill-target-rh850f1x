@@ -1,0 +1,33 @@
+name: package build
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - 'RC*'
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          submodules: true  # Fetch athrill repo
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Build athrill
+        run: |
+          cd build_linux
+          make
+
+      - name: Archive package
+        run: |
+          git clone https://github.com/mitsut/toppers_utils.git
+          perl toppers_utils/makerelease E_PACKAGE
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Release athrill-target
+          path: RELEASE/athrill-target-*.tar.gz
+
