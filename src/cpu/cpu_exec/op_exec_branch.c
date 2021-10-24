@@ -219,7 +219,7 @@ int op_exec_jr(TargetCoreType *cpu)
 /*
  * Format6
  */
-static int op_exec_parse_jmp_addr_fmt6(const char* opcode, TargetCoreType* cpu, uint32 *disp32)
+static int op_exec_parse_jmp_addr_fmt6(const char* opcode, TargetCoreType* cpu, sint32 *disp32)
 {
 	uint16 imm_high16;
 	uint32 imm_high;
@@ -233,14 +233,14 @@ static int op_exec_parse_jmp_addr_fmt6(const char* opcode, TargetCoreType* cpu, 
 		return -1;
 	}
 	imm_high = (uint32)(imm_high16);
-	*disp32 = ((imm_high << 16U) | disp);
+	*disp32 = (sint32)( (uint32)((imm_high << 16U) | disp) );
 	return 0;
 }
 
 int op_exec_jmp_6(TargetCoreType *cpu)
 {
 	uint32 reg1 = cpu->decoded_code->type6.reg1;
-	uint32 disp;
+	sint32 disp;
 
 	if (reg1 >= CPU_GREG_NUM) {
 		return -1;
@@ -251,7 +251,7 @@ int op_exec_jmp_6(TargetCoreType *cpu)
 	}
 
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: JMP disp32(%u) r%d(0x%x)\n", cpu->reg.pc, disp, reg1, cpu->reg.r[reg1] + disp));
-	cpu->reg.pc = cpu->reg.r[reg1] + disp;
+	cpu->reg.pc = (uint32)(cpu->reg.r[reg1] + disp);
 
 	return 0;
 }
@@ -259,8 +259,8 @@ int op_exec_jmp_6(TargetCoreType *cpu)
 int op_exec_jarl_6(TargetCoreType *cpu)
 {
 	sint32 reg1 = cpu->decoded_code->type6.reg1;
-	uint32 disp;
-	uint32 pc = (sint32)cpu->reg.pc;
+	sint32 disp;
+	sint32 pc = (sint32)cpu->reg.pc;
 
 	int ret = op_exec_parse_jmp_addr_fmt6("JARL", cpu, &disp);
 	if (ret < 0) {
@@ -283,8 +283,8 @@ int op_exec_jarl_6(TargetCoreType *cpu)
 
 int op_exec_jr_6(TargetCoreType *cpu)
 {
-	uint32 disp;
-	uint32 pc = (uint32)cpu->reg.pc;
+	sint32 disp;
+	sint32 pc = (uint32)cpu->reg.pc;
 
 	int ret = op_exec_parse_jmp_addr_fmt6("JR", cpu, &disp);
 	if (ret < 0) {
