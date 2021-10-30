@@ -669,6 +669,7 @@ int op_exec_hsh_12(TargetCoreType *cpu)
 
 	cpu->reg.r[reg3] = cpu->reg.r[reg2];
 
+	cpu->reg.pc += 2;
 	return 0;
 }
 int op_exec_hsw_12(TargetCoreType *cpu)
@@ -716,6 +717,7 @@ int op_exec_hsw_12(TargetCoreType *cpu)
 
 	cpu->reg.r[reg3] = result;
 
+	cpu->reg.pc += 2;
 	return 0;
 }
 
@@ -772,6 +774,7 @@ int op_exec_bsh_12(TargetCoreType *cpu)
 
 	cpu->reg.r[reg3] = result;
 
+	cpu->reg.pc += 2;
 	return 0;
 }
 int op_exec_bsw_12(TargetCoreType *cpu)
@@ -828,5 +831,6 @@ int op_exec_bsw_12(TargetCoreType *cpu)
 
 	cpu->reg.r[reg3] = result;
 
+	cpu->reg.pc += 2;
 	return 0;
 }
