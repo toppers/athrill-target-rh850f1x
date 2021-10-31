@@ -89,7 +89,7 @@ int op_exec_st_dw_14(TargetCoreType *cpu)
 		return -1;
 	}
 
-	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: ST.W r%d(0x%x), disp23(%d) r%d(0x%x):0x%x 0x%x\n",
+	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: ST.DW r%d(0x%x), disp23(%d) r%d(0x%x):0x%x 0x%x\n",
 			cpu->reg.pc,
 			reg3, cpu->reg.r[reg3],
 			disp,

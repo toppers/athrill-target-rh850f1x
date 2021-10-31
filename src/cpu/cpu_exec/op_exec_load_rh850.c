@@ -83,7 +83,7 @@ int op_exec_ld_dw_14(TargetCoreType *cpu)
 	if (err != STD_E_OK) {
 		return -1;
 	}
-	err = bus_get_data32(cpu->core_id, addr, (uint32*)&data32[1]);
+	err = bus_get_data32(cpu->core_id, (addr + 4U), (uint32*)&data32[1]);
 	if (err != STD_E_OK) {
 		return -1;
 	}
