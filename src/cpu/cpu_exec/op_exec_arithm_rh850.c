@@ -76,7 +76,7 @@ int op_exec_bins_9(TargetCoreType *cpu)
 	}
 
 	for (i = lsb; i <= msb; i++) {
-		if (cpu->reg.r[reg1] & (1U << i)) {
+		if (cpu->reg.r[reg1] & (1U << (i - lsb))) {
 			reg2_data |= (1U << i);
 		}
 		else {
