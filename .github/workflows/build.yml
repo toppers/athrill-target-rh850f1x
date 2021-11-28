@@ -1,4 +1,4 @@
-name: commit build
+name: build
 
 on:
   push:

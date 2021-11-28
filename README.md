@@ -1,4 +1,5 @@
 # athrill-target-rh850f1x
+![example workflow](https://github.com/toppers/athrill-target-rh850f1x/actions/workflows/build.yml/badge.svg)
 
 rh850f1x Target dependencies for [Athrill](https://github.com/toppers/athrill)
 
