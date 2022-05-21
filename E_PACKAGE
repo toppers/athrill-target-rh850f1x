@@ -1,4 +1,4 @@
-E_PACKAGE athrill-target-rh850f1x
+E_PACKAGE athrill-target-rh850f1x-x86_64-linux
 VERSION %date
 
 INCLUDE MANIFEST
