@@ -137,6 +137,9 @@ target_include_directories(device PRIVATE
 )
 target_sources(device PRIVATE
     "${CORE_DIR}/device/peripheral/serial/fifo/serial_fifo.c"
+    "${CORE_DIR}/device/peripheral/athrill_device.c" 
+    "${CORE_DIR}/device/peripheral/athrill_syscall_device.c" 
+    "${CORE_DIR}/device/peripheral/athrill_mpthread.c" 
     "${TARGET_DIR}/device/device.c"
     "${TARGET_DIR}/device/intc/intc.c"
     "${TARGET_DIR}/device/intc/rh850f1k/intc_config.c"
@@ -151,14 +154,6 @@ target_sources(device PRIVATE
     "${TARGET_DIR}/debugger/executor/concrete_executor/dbg_target_serial_tcp.c"
     "${TARGET_DIR}/debugger/executor/concrete_executor/dbg_target_cpu.c"
 )
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-else()
-target_sources(device PRIVATE
-    "${CORE_DIR}/device/peripheral/athrill_device.c" 
-    "${CORE_DIR}/device/peripheral/athrill_syscall_device.c" 
-    "${CORE_DIR}/device/peripheral/athrill_mpthread.c" 
-)
-endif()
 
 add_library(can)
 target_include_directories(can PRIVATE  
@@ -266,17 +261,12 @@ target_sources(std PRIVATE
     "${CORE_DIR}/lib/file.c" 
     "${CORE_DIR}/lib/winsock_wrapper/winsock_wrapper.c"
     "${CORE_DIR}/lib/udp/udp_comm.c" 
-)
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-else()
-target_sources(std PRIVATE
     "${CORE_DIR}/lib/comm_buffer.c" 
     "${CORE_DIR}/lib/tcp/tcp_socket.c"
     "${CORE_DIR}/lib/tcp/tcp_client.c"
     "${CORE_DIR}/lib/tcp/tcp_connection.c"
     "${CORE_DIR}/lib/tcp/tcp_server.c"
 )
-endif()
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
 else()
