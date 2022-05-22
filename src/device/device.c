@@ -120,9 +120,11 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 	device_serial_init(cpu, dev_clock);
 
 	cpuemu_get_devcfg_value("DEBUG_FUNC_ENABLE_CAN", &enable_mros_can);
+#ifdef	OS_LINUX
 	if (enable_mros_can != 0) {
 		device_init_can(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_CAN]);
 	}
+#endif
 #ifdef SERIAL_FIFO_ENABLE
 	athrill_device_init_serial_fifo();
 #endif /* SERIAL_FIFO_ENABLE */
@@ -150,11 +152,13 @@ void device_supply_clock(DeviceClockType *dev_clock)
 	device_supply_clock_serial(dev_clock);
 	CPUEMU_DEV_SERIAL_PROF_END();
 
+#ifdef	OS_LINUX	/* Windows not supported*/
 	if (enable_mros_can != 0) {
 		CPUEMU_DEV_SERIAL_PROF_START();
 		device_supply_clock_can(dev_clock);
 		CPUEMU_DEV_SERIAL_PROF_END();
 	}
+#endif
 #ifdef SERIAL_FIFO_ENABLE
 	CPUEMU_DEV_INTR_PROF_START();
 	athrill_device_supply_clock_serial_fifo(dev_clock);

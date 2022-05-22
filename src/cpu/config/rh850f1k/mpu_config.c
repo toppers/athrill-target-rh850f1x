@@ -120,6 +120,7 @@ MpuAddressMapType mpu_address_map = {
 				/*
 				 * CAN
 				 */
+#ifdef	OS_LINUX
 				{
 						.type		= DEVICE,
 						.is_malloc	= FALSE,
@@ -130,6 +131,7 @@ MpuAddressMapType mpu_address_map = {
 						.data		= memory_data_CAN,
 						.ops		= &can_memory_operation
 				},
+#endif
 
 				/*
 				 * CLKC
