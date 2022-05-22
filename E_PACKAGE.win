@@ -1,0 +1,7 @@
+E_PACKAGE athrill-target-rh850f1x-x86_64-win
+VERSION %date
+
+INCLUDE MANIFEST
+INCLUDE athrill/MANIFEST
+
+build_win/athrill2.exe
