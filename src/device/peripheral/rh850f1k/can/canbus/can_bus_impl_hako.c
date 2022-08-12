@@ -160,7 +160,7 @@ static void device_parse_can_config(HakoTopicType type, const char* fmt_num, con
 					&can_bus_hako_sub_topic[i].rtr,
 					&can_bus_hako_sub_topic[i].dlc,
 					&can_bus_hako_sub_topic[i].canid,
-					&can_bus_hako_pub_topic[i].pdu_channel
+					&can_bus_hako_sub_topic[i].pdu_channel
 					);
 			if (n != 6U) {
 				printf("ERROR: can not parse param(%s). format:channel<ch>/CAN_IDE<ide>_RTR<rtr>_DLC<dlc>_<canid>\n", param_value);
@@ -256,9 +256,12 @@ static Std_ReturnType can_bus_operation_impl_hako_tx_start_send(CanChannelIdType
 		can_msg.head.canid = data->id;
 		int j;
 		for (j = 0; j < 8; j++) {
-			can_msg.body.data[0] = data->data[j];
+			can_msg.body.data[j] = data->data[j];
 		}
-		(void)hako_client_write_pdu(hako_asset_name, can_bus_hako_pub_topic[i].pdu_channel, (const char*)&can_msg, sizeof(Hako_HakoCan));
+		int err = hako_client_write_pdu(hako_asset_name, can_bus_hako_pub_topic[i].pdu_channel, (const char*)&can_msg, sizeof(Hako_HakoCan));
+		if (err != 0) {
+			printf("ERROR: hako_client_write_pdu() error\n");
+		}
 		hako_client_notify_write_pdu_done(hako_asset_name);
 	}
 	else {
