@@ -183,8 +183,8 @@ static void can_bus_operation_impl_hako_init(void)
 	(void)cpuemu_get_devcfg_value("DEBUG_FUNC_CAN_RX_QUEUE_SIZE ", &rx_queue_max);
 	can_bus_hako_rx_buffer_init();
 
-	device_parse_can_config(HakoTopicType_PUB, "DEBUG_FUNC_MROS_TOPIC_PUB_NUM", "DEBUG_FUNC_MROS_TOPIC_PUB_%d");
-	device_parse_can_config(HakoTopicType_SUB, "DEBUG_FUNC_MROS_TOPIC_SUB_NUM", "DEBUG_FUNC_MROS_TOPIC_SUB_%d");
+	device_parse_can_config(HakoTopicType_PUB, "DEBUG_FUNC_HAKO_PUB_NUM", "DEBUG_FUNC_HAKO_PUB_%d");
+	device_parse_can_config(HakoTopicType_SUB, "DEBUG_FUNC_HAKO_SUB_NUM", "DEBUG_FUNC_HAKO_SUB_%d");
 
 	return;
 }
