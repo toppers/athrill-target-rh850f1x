@@ -97,11 +97,19 @@ static uint32 can_clock_fd = 50000;
 
 void device_init_can(MpuAddressRegionType *region)
 {
+	char *asset_name = NULL;
 	(void)cpuemu_get_devcfg_value("DEVICE_CONFIG_CAN_FD", &can_clock_fd);
+	int ret = cpuemu_get_devcfg_string("DEBUG_FUNC_HAKO_ASSET_NAME", &asset_name);
 
 	can_reset();
-	can_rx_init(&can_bus_operation_impl_ros);
-	can_tx_init(&can_bus_operation_impl_ros);
+	if (ret == STD_E_NOENT) {
+		can_rx_init(&can_bus_operation_impl_ros);
+		can_tx_init(&can_bus_operation_impl_ros);
+	}
+	else {
+		can_rx_init(&can_bus_operation_impl_hako);
+		can_tx_init(&can_bus_operation_impl_hako);
+	}
 
 	can_bus_operation_impl_ros.init();
 	return;
