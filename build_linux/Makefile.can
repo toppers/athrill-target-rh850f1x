@@ -60,7 +60,7 @@ IFLAGS	+= -I$(TARGET_DIR)/cpu
 IFLAGS	+= -I$(TARGET_DIR)/cpu/config
 IFLAGS	+= -I$(TARGET_DIR)/cpu/mpu/target
 IFLAGS  += -I$(CAN_DIR)
-IFLAGS	+= -I$(HAKO_INC_DIR)
+IFLAGS	+= -I$(HAKOC_INC_DIR)
 IFLAGS	+= -I$(HAKO_PDU_INC_DIR)
 
 CAN_OBJS := can.o
