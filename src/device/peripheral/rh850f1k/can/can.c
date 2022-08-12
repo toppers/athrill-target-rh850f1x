@@ -105,13 +105,14 @@ void device_init_can(MpuAddressRegionType *region)
 	if (ret == STD_E_NOENT) {
 		can_rx_init(&can_bus_operation_impl_ros);
 		can_tx_init(&can_bus_operation_impl_ros);
+		can_bus_operation_impl_ros.init();
 	}
 	else {
 		can_rx_init(&can_bus_operation_impl_hako);
 		can_tx_init(&can_bus_operation_impl_hako);
+		can_bus_operation_impl_hako.init();
 	}
 
-	can_bus_operation_impl_ros.init();
 	return;
 }
 
