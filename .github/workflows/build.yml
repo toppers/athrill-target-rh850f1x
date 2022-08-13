@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Setup cmake
@@ -29,15 +29,15 @@ jobs:
           make
           ./athrill2
 
-      - name: Setup MinGW for Windows
-        if:  matrix.os == 'windows-latest'
-        uses: egor-tensin/setup-mingw@v2
+      # - name: Setup MinGW for Windows
+      #   if:  matrix.os == 'windows-latest'
+      #   uses: egor-tensin/setup-mingw@v2
 
-      - name: Build athrill for Windows
-        if:  matrix.os == 'windows-latest'
-        run: |
-          mkdir build
-          cd build
-          cmake -G"MinGW Makefiles" ..
-          make
-          .\athrill2.exe
+      # - name: Build athrill for Windows
+      #   if:  matrix.os == 'windows-latest'
+      #   run: |
+      #     mkdir build
+      #     cd build
+      #     cmake -G"MinGW Makefiles" ..
+      #     make
+      #     .\athrill2.exe
