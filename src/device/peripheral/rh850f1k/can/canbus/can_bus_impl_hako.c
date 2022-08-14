@@ -203,7 +203,7 @@ static bool can_bus_operation_impl_hako_rx_is_arrived(CanChannelIdType cid)
 				continue;
 			}
 			Hako_HakoCan can_msg;
-			if (hako_client_read_pdu(hako_asset_name, can_bus_hako_sub_topic[i].pdu_channel, (char *)&can_msg, sizeof(Hako_HakoCan) == 0)) {
+			if (hako_client_read_pdu(hako_asset_name, can_bus_hako_sub_topic[i].pdu_channel, (char *)&can_msg, sizeof(Hako_HakoCan)) == 0) {
 				CanDataType data;
 				data.rtr = can_msg.head.rtr;
 				data.ide = can_msg.head.ide;
@@ -214,6 +214,9 @@ static bool can_bus_operation_impl_hako_rx_is_arrived(CanChannelIdType cid)
 			}
 		}
 		hako_client_notify_read_pdu_done(hako_asset_name);
+	}
+	else if (hako_client_is_pdu_sync_mode(hako_asset_name) == 0) {
+		hako_client_notify_write_pdu_done(hako_asset_name);
 	}
 	return can_bus_hako_rx_is_arrived(cid);
 }
@@ -247,7 +250,7 @@ static Std_ReturnType can_bus_operation_impl_hako_tx_start_send(CanChannelIdType
 		printf("ERROR: ROS Unknown can data send(ide=%u rtr=%u dlc=%u id=0x%x\n", data->ide, data->rtr, data->dlc, data->id);
 		return STD_E_NOENT;
 	}
-	if ((hako_client_is_simulation_mode() == 0) || (hako_client_is_pdu_sync_mode(hako_asset_name) == 0)) {
+	if (hako_client_is_simulation_mode() == 0) {
 		Hako_HakoCan can_msg;
 		can_msg.head.rtr = data->rtr;
 		can_msg.head.ide = data->ide;
@@ -264,9 +267,8 @@ static Std_ReturnType can_bus_operation_impl_hako_tx_start_send(CanChannelIdType
 		}
 		hako_client_notify_write_pdu_done(hako_asset_name);
 	}
-	else {
-		//not ready
-		printf("ERROR: Can not write pdu data\n");
+	else if (hako_client_is_pdu_sync_mode(hako_asset_name) == 0) {
+		hako_client_notify_write_pdu_done(hako_asset_name);
 	}
 	return STD_E_OK;
 }
