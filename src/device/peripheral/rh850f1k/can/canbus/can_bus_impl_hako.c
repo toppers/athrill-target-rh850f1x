@@ -250,7 +250,7 @@ static Std_ReturnType can_bus_operation_impl_hako_tx_start_send(CanChannelIdType
 		printf("ERROR: ROS Unknown can data send(ide=%u rtr=%u dlc=%u id=0x%x\n", data->ide, data->rtr, data->dlc, data->id);
 		return STD_E_NOENT;
 	}
-	if (hako_client_is_simulation_mode() == 0) {
+	if ((hako_client_is_simulation_mode() == 0) || (hako_client_is_pdu_sync_mode(hako_asset_name) == 0)) {
 		Hako_HakoCan can_msg;
 		can_msg.head.rtr = data->rtr;
 		can_msg.head.ide = data->ide;
@@ -265,9 +265,6 @@ static Std_ReturnType can_bus_operation_impl_hako_tx_start_send(CanChannelIdType
 		if (err != 0) {
 			printf("ERROR: hako_client_write_pdu() error\n");
 		}
-		hako_client_notify_write_pdu_done(hako_asset_name);
-	}
-	else if (hako_client_is_pdu_sync_mode(hako_asset_name) == 0) {
 		hako_client_notify_write_pdu_done(hako_asset_name);
 	}
 	return STD_E_OK;
