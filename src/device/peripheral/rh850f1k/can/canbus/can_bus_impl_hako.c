@@ -199,7 +199,7 @@ static bool can_bus_operation_impl_hako_rx_is_arrived(CanChannelIdType cid)
 			if (can_bus_hako_sub_topic[i].cid != cid) {
 				continue;
 			}
-			else if (hako_client_pdu_is_dirty(can_bus_hako_sub_topic[i].pdu_channel) != 0) {
+			else if (hako_client_pdu_is_dirty(hako_asset_name, can_bus_hako_sub_topic[i].pdu_channel) != 0) {
 				continue;
 			}
 			Hako_HakoCan can_msg;
