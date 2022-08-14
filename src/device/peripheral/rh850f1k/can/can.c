@@ -124,6 +124,18 @@ void device_supply_clock_can(DeviceClockType *dev_clock)
 		can_tx_done();
 		can_intr_run();
 	}
+#ifdef CPUEMU_CLOCK_BUG_FIX
+    else {
+        uint64 next_clock = ((dev_clock->clock + (can_clock_fd -1)) / can_clock_fd) * can_clock_fd;
+        uint64 interval = next_clock - dev_clock->clock;
+        if (interval < dev_clock->min_intr_interval) {
+            if (interval == 0) {
+                interval = 1;
+            }
+            dev_clock->min_intr_interval = interval;
+        }
+	}
+#endif
 	return;
 }
 

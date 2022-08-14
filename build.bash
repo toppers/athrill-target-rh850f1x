@@ -26,7 +26,7 @@ else
 	cd ${CURR_DIR}
 
 	cd build_linux
-	make
+	make skip_clock_bugfix=true fix_intr_cpu_rcv_clr=true fix_intr_pmr_bugfix=true
 	cd ${CURR_DIR}
 fi
 
