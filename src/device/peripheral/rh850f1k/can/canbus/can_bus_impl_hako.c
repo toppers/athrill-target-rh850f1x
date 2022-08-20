@@ -185,7 +185,7 @@ static void can_bus_operation_impl_hako_init(void)
 
 	device_parse_can_config(HakoTopicType_PUB, "DEBUG_FUNC_HAKO_PUB_NUM", "DEBUG_FUNC_HAKO_PUB_%d");
 	device_parse_can_config(HakoTopicType_SUB, "DEBUG_FUNC_HAKO_SUB_NUM", "DEBUG_FUNC_HAKO_SUB_%d");
-
+	(void)hako_client_start_feedback();
 	return;
 }
 
