@@ -20,11 +20,19 @@ jobs:
           submodules: true  # Fetch athrill repo
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
-      - name: Build athrill for Linux or Mac
-        if:  " (matrix.os == 'ubuntu-latest') || (matrix.os == 'macos-latest') " 
+      - name: Build athrill for Linux
+        if:  " (matrix.os == 'ubuntu-latest')" 
         run: |
           sudo apt-get update
           sudo apt-get install -y libspdlog-dev
+          bash build.bash all
+          cd build_linux
+          ./athrill2
+
+      - name: Build athrill for Mac
+        if:  " (matrix.os == 'macos-latest') " 
+        run: |
+          brew install spdlog
           bash build.bash all
           cd build_linux
           ./athrill2
