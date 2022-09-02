@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
 
     steps:
       - name: Setup cmake
@@ -20,13 +20,27 @@ jobs:
           submodules: true  # Fetch athrill repo
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
-      - name: Build athrill for Linux or Mac
-        if:  " (matrix.os == 'ubuntu-latest') || (matrix.os == 'macos-latest') " 
+      - name: Build athrill for Linux
+        if:  " (matrix.os == 'ubuntu-latest')" 
         run: |
-          mkdir build
-          cd build
-          cmake -H.. 
-          make
+          sudo apt-get update
+          sudo apt-get install -y libspdlog-dev
+          cd hakoniwa-core-cpp-client
+          git submodule update --init --recursive
+          cd ../
+          bash build.bash all
+          cd build_linux
+          ./athrill2
+
+      - name: Build athrill for Mac
+        if:  " (matrix.os == 'macos-latest') " 
+        run: |
+          brew install spdlog
+          cd hakoniwa-core-cpp-client
+          git submodule update --init --recursive
+          cd ../
+          bash build.bash all
+          cd build_linux
           ./athrill2
 
       # - name: Setup MinGW for Windows

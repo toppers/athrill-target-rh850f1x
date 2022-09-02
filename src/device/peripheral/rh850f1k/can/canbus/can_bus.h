@@ -58,5 +58,6 @@ typedef struct {
 } CanBusOperationType;
 
 extern CanBusOperationType can_bus_operation_impl_ros;
+extern CanBusOperationType can_bus_operation_impl_hako;
 
 #endif /* _CAN_BUS_H_ */

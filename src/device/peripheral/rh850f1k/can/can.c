@@ -97,13 +97,22 @@ static uint32 can_clock_fd = 50000;
 
 void device_init_can(MpuAddressRegionType *region)
 {
+	char *asset_name = NULL;
 	(void)cpuemu_get_devcfg_value("DEVICE_CONFIG_CAN_FD", &can_clock_fd);
+	int ret = cpuemu_get_devcfg_string("DEBUG_FUNC_HAKO_ASSET_NAME", &asset_name);
 
 	can_reset();
-	can_rx_init(&can_bus_operation_impl_ros);
-	can_tx_init(&can_bus_operation_impl_ros);
+	if (ret == STD_E_NOENT) {
+		can_rx_init(&can_bus_operation_impl_ros);
+		can_tx_init(&can_bus_operation_impl_ros);
+		can_bus_operation_impl_ros.init();
+	}
+	else {
+		can_rx_init(&can_bus_operation_impl_hako);
+		can_tx_init(&can_bus_operation_impl_hako);
+		can_bus_operation_impl_hako.init();
+	}
 
-	can_bus_operation_impl_ros.init();
 	return;
 }
 
@@ -115,6 +124,18 @@ void device_supply_clock_can(DeviceClockType *dev_clock)
 		can_tx_done();
 		can_intr_run();
 	}
+#ifdef CPUEMU_CLOCK_BUG_FIX
+    else {
+        uint64 next_clock = ((dev_clock->clock + (can_clock_fd -1)) / can_clock_fd) * can_clock_fd;
+        uint64 interval = next_clock - dev_clock->clock;
+        if (interval < dev_clock->min_intr_interval) {
+            if (interval == 0) {
+                interval = 1;
+            }
+            dev_clock->min_intr_interval = interval;
+        }
+	}
+#endif
 	return;
 }
 

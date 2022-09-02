@@ -60,6 +60,8 @@ IFLAGS	+= -I$(TARGET_DIR)/cpu
 IFLAGS	+= -I$(TARGET_DIR)/cpu/config
 IFLAGS	+= -I$(TARGET_DIR)/cpu/mpu/target
 IFLAGS  += -I$(CAN_DIR)
+IFLAGS	+= -I$(HAKOC_INC_DIR)
+IFLAGS	+= -I$(HAKO_PDU_INC_DIR)
 
 CAN_OBJS := can.o
 CAN_OBJS += can_tx.o
@@ -86,6 +88,7 @@ CAN_OBJS += can_tx_history.o
 CAN_OBJS += can_register_mapping_io_tx_queue.o
 CAN_OBJS += can_register_mapping_io_tx_history.o
 CAN_OBJS += can_bus_impl_ros.o
+CAN_OBJS += can_bus_impl_hako.o
 
 CFLAGS	:= $(WFLAGS)
 CFLAGS	+= $(IFLAGS)

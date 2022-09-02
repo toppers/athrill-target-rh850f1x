@@ -82,7 +82,7 @@ static CanModeGlobalType *can_rx_mode_global;
 void can_rx_init(CanBusOperationType *canbus_op)
 {
 	can_rx_mode_global = &can_mode_global;
-	canbus_rx_operation = &can_bus_operation_impl_ros;
+	canbus_rx_operation = canbus_op;
 
 	can_rx_update_rule_table();
 	return;
