@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Setup cmake
@@ -37,19 +37,19 @@ jobs:
           make
           ./athrill2
       
-      - name: Setup MinGW for Windows
-        if:  matrix.os == 'windows-latest'
-        uses: egor-tensin/setup-mingw@v2
+      # - name: Setup MinGW for Windows
+      #   if:  matrix.os == 'windows-latest'
+      #   uses: egor-tensin/setup-mingw@v2
 
-      - name: Build athrill for Windows
-        if:  matrix.os == 'windows-latest'
-        run: |
-          mkdir build_win
-          mkdir build
-          cd build
-          cmake -G"MinGW Makefiles" ..
-          make
-          .\athrill2.exe
+      # - name: Build athrill for Windows
+      #   if:  matrix.os == 'windows-latest'
+      #   run: |
+      #     mkdir build_win
+      #     mkdir build
+      #     cd build
+      #     cmake -G"MinGW Makefiles" ..
+      #     make
+      #     .\athrill2.exe
 
       - name: Move to build folder(linux)
         if:  matrix.os == 'ubuntu-latest'
@@ -62,11 +62,11 @@ jobs:
           mkdir build_mac
           cp build/athrill2 build_mac/
           perl toppers_utils/makerelease E_PACKAGE.darwin
-      - name: Move to build folder(win)
-        if:  matrix.os == 'windows-latest'
-        run: |
-          cp build/athrill2.exe build_win/
-          perl toppers_utils/makerelease E_PACKAGE.win
+      # - name: Move to build folder(win)
+      #   if:  matrix.os == 'windows-latest'
+      #   run: |
+      #     cp build/athrill2.exe build_win/
+      #     perl toppers_utils/makerelease E_PACKAGE.win
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3

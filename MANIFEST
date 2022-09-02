@@ -1,6 +1,10 @@
 PACKAGE athrill-target-rh850f1x
-VERSION 0.A.1
+VERSION 0.A.2
 
+CMakeLists.txt
+E_PACKAGE
+E_PACKAGE.darwin
+E_PACKAGE.win
 LICENSE.md
 MANIFEST
 README.md
@@ -12,8 +16,8 @@ build_linux/Makefile.device
 build_linux/Makefile.env
 build_linux/Makefile.mpu
 build_linux/Makefile_v850.cpu
-
 params/rh850f1k/atk2-sc1/device_config.txt
+params/rh850f1k/atk2-sc1/device_config_with_can.txt
 params/rh850f1k/atk2-sc1/memory.txt
 params/rh850f1k/atk2-sc3/device_config.txt
 params/rh850f1k/atk2-sc3/memory.txt
@@ -34,16 +38,16 @@ src/cpu/cpu_dec/op_parse.c
 src/cpu/cpu_dec/op_parse.h
 src/cpu/cpu_dec/op_parse_private.c
 src/cpu/cpu_dec/op_parse_private.h
+src/cpu/cpu_exec/op_exec.c
+src/cpu/cpu_exec/op_exec.h
 src/cpu/cpu_exec/op_exec_arithm.c
 src/cpu/cpu_exec/op_exec_arithm_rh850.c
 src/cpu/cpu_exec/op_exec_bit.c
 src/cpu/cpu_exec/op_exec_branch.c
 src/cpu/cpu_exec/op_exec_branch_rh850.c
-src/cpu/cpu_exec/op_exec.c
 src/cpu/cpu_exec/op_exec_dbg.c
 src/cpu/cpu_exec/op_exec_div.c
 src/cpu/cpu_exec/op_exec_fpu.c
-src/cpu/cpu_exec/op_exec.h
 src/cpu/cpu_exec/op_exec_load.c
 src/cpu/cpu_exec/op_exec_load_rh850.c
 src/cpu/cpu_exec/op_exec_logic.c
@@ -75,16 +79,14 @@ src/device/intc/intc_user.c
 src/device/intc/intc_user.h
 src/device/intc/rh850f1k/intc_config.c
 src/device/intc/rh850f1k/intc_config.h
+src/device/peripheral/rh850f1k/can/can.c
+src/device/peripheral/rh850f1k/can/can.h
 src/device/peripheral/rh850f1k/can/can_buffer.c
 src/device/peripheral/rh850f1k/can/can_buffer.h
-src/device/peripheral/rh850f1k/can/canbus/can_bus.h
-src/device/peripheral/rh850f1k/can/canbus/can_bus_impl_ros.c
-src/device/peripheral/rh850f1k/can/can.c
 src/device/peripheral/rh850f1k/can/can_config.h
 src/device/peripheral/rh850f1k/can/can_data.h
 src/device/peripheral/rh850f1k/can/can_fifo.c
 src/device/peripheral/rh850f1k/can/can_fifo.h
-src/device/peripheral/rh850f1k/can/can.h
 src/device/peripheral/rh850f1k/can/can_interrupt.c
 src/device/peripheral/rh850f1k/can/can_interrupt.h
 src/device/peripheral/rh850f1k/can/can_mode_channel.c
@@ -101,13 +103,15 @@ src/device/peripheral/rh850f1k/can/can_tx_history.h
 src/device/peripheral/rh850f1k/can/can_tx_queue.c
 src/device/peripheral/rh850f1k/can/can_tx_queue.h
 src/device/peripheral/rh850f1k/can/can_types.h
+src/device/peripheral/rh850f1k/can/canbus/can_bus.h
+src/device/peripheral/rh850f1k/can/canbus/can_bus_impl_ros.c
 src/device/peripheral/rh850f1k/can/mapping/can_register.h
 src/device/peripheral/rh850f1k/can/mapping/can_register_mapping.c
 src/device/peripheral/rh850f1k/can/mapping/can_register_mapping.h
+src/device/peripheral/rh850f1k/can/mapping/can_register_mapping_io.h
 src/device/peripheral/rh850f1k/can/mapping/can_register_mapping_io_channel.c
 src/device/peripheral/rh850f1k/can/mapping/can_register_mapping_io_fifo_status.c
 src/device/peripheral/rh850f1k/can/mapping/can_register_mapping_io_global.c
-src/device/peripheral/rh850f1k/can/mapping/can_register_mapping_io.h
 src/device/peripheral/rh850f1k/can/mapping/can_register_mapping_io_rx_buffer.c
 src/device/peripheral/rh850f1k/can/mapping/can_register_mapping_io_rx_fifo.c
 src/device/peripheral/rh850f1k/can/mapping/can_register_mapping_io_rx_rule.c
