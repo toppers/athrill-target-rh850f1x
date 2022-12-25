@@ -29,8 +29,7 @@ jobs:
           git submodule update --init --recursive
           cd ../
           bash build.bash all
-          cd build_linux
-          ./athrill2
+          ./athrill/bin/linux/athrill2
 
       - name: Build athrill for Mac
         if:  " (matrix.os == 'macos-latest') " 

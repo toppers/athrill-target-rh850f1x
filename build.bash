@@ -21,7 +21,6 @@ then
 else
 	CURR_DIR=`pwd`
 	cd hakoniwa-core-cpp-client
-	bash install.bash
 	bash build.bash
 	cd ${CURR_DIR}
 
