@@ -224,7 +224,7 @@ extern OpExecType op_exec_table[OP_EXEC_TABLE_NUM];
 #define op_exec_cvtf_ws_F	op_exec_cvtf_ws_F
 #define op_exec_divf_s_F	op_exec_divf_s_F
 #define op_exec_floorf_sl_F	NULL /* not supported */
-#define op_exec_floorf_sul_F	NULL /* not supported */
+#define op_exec_floorf_sul_F	op_exec_floorf_sul_F
 #define op_exec_floorf_suw_F	NULL /* not supported */
 #define op_exec_floorf_sw_F	NULL /* not supported */
 #define op_exec_fmaf_s_F	op_exec_fmaf_s_F
@@ -245,7 +245,7 @@ extern OpExecType op_exec_table[OP_EXEC_TABLE_NUM];
 #define op_exec_subf_s_F	op_exec_subf_s_F
 #define op_exec_trfsr_F		op_exec_trfsr_F
 #define op_exec_trncf_sl_F	NULL /* not supported */
-#define op_exec_trncf_sul_F	NULL /* not supported */
+#define op_exec_trncf_sul_F	op_exec_trncf_sul_F
 #define op_exec_trncf_suw_F	op_exec_trncf_suw_F
 #define op_exec_trncf_sw_F	op_exec_trncf_sw_F
 

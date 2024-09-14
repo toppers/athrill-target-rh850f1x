@@ -3180,8 +3180,8 @@ int op_exec_trncf_sul_F(TargetCoreType *cpu)
 	DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: TRNCF.SUL r%d(%f) r%d :%llu\n",
         cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data));
 //	printf( "0x%x: TRNCF.SUL r%d(%f) r%d :%llu\n", cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data);
-	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
-	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.r[reg3_0] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.r[reg3_1] = (uint32)(result_data>>32);
 	cpu->reg.pc += 4;
 
 	return 0;
@@ -3311,8 +3311,8 @@ int op_exec_floorf_sul_F(TargetCoreType *cpu)
 
 	//DBG_PRINT((DBG_EXEC_OP_BUF(), DBG_EXEC_OP_BUF_LEN(), "0x%x: FLOORF.SUL r%d(%f) r%d :%llu\n", cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data));
   //printf( "0x%x: FLOORF.SUL r%d(%f) r%d :%llu\n", cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data);
-	cpu->reg.r[reg3_0] = (uint32)(result_data>>32);
-	cpu->reg.r[reg3_1] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.r[reg3_0] = (uint32)(result_data & 0xffffffff);
+	cpu->reg.r[reg3_1] = (uint32)(result_data>>32);
 	printf( "0x%x: FLOORF.SUL r%d(%f) r%d :%llu\n", cpu->reg.pc, reg2, reg2_data.data, reg3_0,result_data);
 
 	cpu->reg.pc += 4;
