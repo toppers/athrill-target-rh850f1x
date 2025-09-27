@@ -36,4 +36,4 @@ jobs:
 
       - name: Build athrill
         run: |
-          ./build.bash all
+          bash ./build.bash all
