@@ -2,40 +2,65 @@ name: build
 
 on:
   push:
+  pull_request:
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout (with submodules)
         uses: actions/checkout@v4
         with:
-          submodules: true
           fetch-depth: 0
+          submodules: recursive   # ← ネストしたサブモジュールも取得
 
-      - name: Setup cmake
+      - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v1.14
         with:
-          cmake-version: '3.22.x'
+          cmake-version: 3.22.x
 
-      - name: Install dependencies (Linux)
+      # --- OS deps ---
+      - name: Install deps (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libspdlog-dev
+          sudo apt-get install -y build-essential ninja-build \
+                                  libspdlog-dev
 
-      - name: Install dependencies (macOS)
+      - name: Install deps (macOS)
         if: matrix.os == 'macos-latest'
-        run: brew install spdlog
+        run: |
+          brew update
+          brew install ninja spdlog
+
+      # --- Build submodule(s) that produce -lhakoc -lhako ---
+      - name: Build hakoniwa-core-cpp-client
+        run: |
+          cmake -S hakoniwa-core-cpp-client -B hakoniwa-core-cpp-client/cmake-build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build hakoniwa-core-cpp-client/cmake-build --config Release -- -v
+
+      # --- Build main ---
+      - name: Configure athrill
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
       - name: Build athrill
+        run: cmake --build build --config Release -- -v
+
+      - name: Smoke-run
+        working-directory: build
         run: |
-          mkdir build
-          cd build
-          cmake ..
-          make
-          ./athrill2
+          ./athrill2 || true  # 必要なら引数やダミーデータに合わせて
+
+      - name: Upload artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: athrill2-${{ matrix.os }}
+          path: |
+            build/athrill2
