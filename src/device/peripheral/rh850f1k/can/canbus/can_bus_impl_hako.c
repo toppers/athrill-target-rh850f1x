@@ -8,6 +8,7 @@
 #include <string.h>
 
 static char* hako_asset_name = NULL;
+static char* hako_robot_name = NULL;
 
 static void can_bus_operation_impl_hako_init(void);
 static bool can_bus_operation_impl_hako_rx_is_arrived(CanChannelIdType cid);
@@ -148,7 +149,7 @@ static void device_parse_can_config(HakoTopicType type, const char* fmt_num, con
 			if (n != 6U) {
 				printf("ERROR: can not parse param(%s). format:channel<ch>/CAN_IDE<ide>_RTR<rtr>_DLC<dlc>_<canid>\n", param_value);
 			}
-			err = hako_client_create_pdu_channel(can_bus_hako_pub_topic[i].pdu_channel, sizeof(Hako_HakoCan));
+			err = hako_client_create_pdu_lchannel(hako_robot_name, can_bus_hako_pub_topic[i].pdu_channel, sizeof(Hako_HakoCan));
 			if (err != 0) {
 				printf("ERROR: can not create pdu channel: %d\n", can_bus_hako_pub_topic[i].cid);
 			}
@@ -174,6 +175,7 @@ static void can_bus_operation_impl_hako_init(void)
 	int err;
 
 	(void)cpuemu_get_devcfg_string("DEBUG_FUNC_HAKO_ASSET_NAME", &hako_asset_name);
+	(void)cpuemu_get_devcfg_string("DEBUG_FUNC_HAKO_ROBOT_NAME", &hako_robot_name);
 	err = hako_client_init(hako_asset_name);
 	if (err != 0) {
 		printf("ERROR: hako_client_init() error=%d\n", err);
@@ -199,11 +201,11 @@ static bool can_bus_operation_impl_hako_rx_is_arrived(CanChannelIdType cid)
 			if (can_bus_hako_sub_topic[i].cid != cid) {
 				continue;
 			}
-			else if (hako_client_pdu_is_dirty(hako_asset_name, can_bus_hako_sub_topic[i].pdu_channel) != 0) {
+			else if (hako_client_pdu_is_dirty(hako_asset_name, hako_robot_name, can_bus_hako_sub_topic[i].pdu_channel) != 0) {
 				continue;
 			}
 			Hako_HakoCan can_msg;
-			if (hako_client_read_pdu(hako_asset_name, can_bus_hako_sub_topic[i].pdu_channel, (char *)&can_msg, sizeof(Hako_HakoCan)) == 0) {
+			if (hako_client_read_pdu(hako_asset_name, hako_robot_name, can_bus_hako_sub_topic[i].pdu_channel, (char *)&can_msg, sizeof(Hako_HakoCan)) == 0) {
 				CanDataType data;
 				data.rtr = can_msg.head.rtr;
 				data.ide = can_msg.head.ide;
@@ -261,7 +263,7 @@ static Std_ReturnType can_bus_operation_impl_hako_tx_start_send(CanChannelIdType
 		for (j = 0; j < 8; j++) {
 			can_msg.body.data[j] = data->data[j];
 		}
-		int err = hako_client_write_pdu(hako_asset_name, can_bus_hako_pub_topic[i].pdu_channel, (const char*)&can_msg, sizeof(Hako_HakoCan));
+		int err = hako_client_write_pdu(hako_asset_name, hako_robot_name, can_bus_hako_pub_topic[i].pdu_channel, (const char*)&can_msg, sizeof(Hako_HakoCan));
 		if (err != 0) {
 			printf("ERROR: hako_client_write_pdu() error\n");
 		}
