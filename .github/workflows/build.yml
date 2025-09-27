@@ -13,54 +13,29 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
-      - name: Checkout (with submodules)
+      - name: Checkout Repository (with submodules)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive   # ← ネストしたサブモジュールも取得
+          submodules: recursive   # ← git clone --recursive 相当
 
-      - name: Setup CMake
+      - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v1.14
         with:
-          cmake-version: 3.22.x
+          cmake-version: '3.22.x'
 
-      # --- OS deps ---
-      - name: Install deps (Ubuntu)
+      - name: Install dependencies (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential ninja-build \
-                                  libspdlog-dev
+          sudo apt-get install -y libspdlog-dev
 
-      - name: Install deps (macOS)
+      - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
         run: |
           brew update
-          brew install ninja spdlog
-
-      # --- Build submodule(s) that produce -lhakoc -lhako ---
-      - name: Build hakoniwa-core-cpp-client
-        run: |
-          cmake -S hakoniwa-core-cpp-client -B hakoniwa-core-cpp-client/cmake-build -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release
-          cmake --build hakoniwa-core-cpp-client/cmake-build --config Release -- -v
-
-      # --- Build main ---
-      - name: Configure athrill
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          brew install spdlog
 
       - name: Build athrill
-        run: cmake --build build --config Release -- -v
-
-      - name: Smoke-run
-        working-directory: build
         run: |
-          ./athrill2 || true  # 必要なら引数やダミーデータに合わせて
-
-      - name: Upload artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: athrill2-${{ matrix.os }}
-          path: |
-            build/athrill2
+          ./build.bash all
