@@ -1,0 +1,20 @@
+{
+	"name": "Hakoniwa Base Development",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"UBUNTU_VERSION": "22.04"
+		}
+	},
+	"features": {
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.cpptools-extension-pack",
+				"ms-vscode.cmake-tools"
+			]
+		}
+	}
+}
