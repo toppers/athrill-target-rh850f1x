@@ -2,55 +2,38 @@ name: build
 
 on:
   push:
+  pull_request:
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.12
-
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Checkout Repository (with submodules)
+        uses: actions/checkout@v4
         with:
-          submodules: true  # Fetch athrill repo
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+          fetch-depth: 0
+          submodules: recursive   # ← git clone --recursive 相当
 
-      - name: Build athrill for Linux
-        if:  " (matrix.os == 'ubuntu-20.04')" 
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.14
+        with:
+          cmake-version: '3.22.x'
+
+      - name: Install dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libspdlog-dev
-          cd hakoniwa-core-cpp-client
-          git submodule update --init --recursive
-          cd ../
-          bash build.bash all
-          ./athrill/bin/linux/athrill2
 
-      - name: Build athrill for Mac
-        if:  " (matrix.os == 'macos-latest') " 
+      - name: Install dependencies (macOS)
+        if: matrix.os == 'macos-latest'
         run: |
-          brew install spdlog
-          cd hakoniwa-core-cpp-client
-          git submodule update --init --recursive
-          cd ../
-          bash build.bash all
-          cd build_linux
-          ./athrill2
+          brew update
 
-      # - name: Setup MinGW for Windows
-      #   if:  matrix.os == 'windows-latest'
-      #   uses: egor-tensin/setup-mingw@v2
-
-      # - name: Build athrill for Windows
-      #   if:  matrix.os == 'windows-latest'
-      #   run: |
-      #     mkdir build
-      #     cd build
-      #     cmake -G"MinGW Makefiles" ..
-      #     make
-      #     .\athrill2.exe
+      - name: Build athrill
+        run: |
+          bash ./build.bash all
