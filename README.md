@@ -4,8 +4,8 @@
 
 RH850F1x target for [Athrill](https://github.com/toppers/athrill).
 
-This `cpp` branch builds `athrill3` with CMake on the `toppers/athrill` core (v3.0.0 or later).
-The `master` branch keeps the earlier Makefile-based releases (v0.A.x, `athrill2`).
+Since v1.0.0, this target builds `athrill3` with CMake and needs the `toppers/athrill` core v3.0.0 or later.
+Releases up to v0.A.2 were built with Makefiles and provided `athrill2`.
 
 ## Supported targets
 
@@ -28,7 +28,7 @@ Check out this repository beside the `toppers/athrill` core checkout (v3.0.0 or 
 
 ```sh
 git clone -b v3.0.0 https://github.com/toppers/athrill.git
-git clone -b cpp https://github.com/toppers/athrill-target-rh850f1x.git
+git clone https://github.com/toppers/athrill-target-rh850f1x.git
 cd athrill-target-rh850f1x
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
