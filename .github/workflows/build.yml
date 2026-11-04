@@ -6,34 +6,33 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout Repository (with submodules)
+      - name: Checkout target
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          submodules: recursive   # ← git clone --recursive 相当
+          path: athrill-target-rh850f1x
 
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.14
+      - name: Select Athrill branch
+        id: athrill_ref
+        run: |
+          BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          if git ls-remote --exit-code --heads https://github.com/toppers/athrill.git "$BRANCH" >/dev/null; then
+            echo "ref=$BRANCH" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=cpp" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout Athrill
+        uses: actions/checkout@v4
         with:
-          cmake-version: '3.22.x'
+          repository: toppers/athrill
+          ref: ${{ steps.athrill_ref.outputs.ref }}
+          path: athrill
 
-      - name: Install dependencies (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Build and test
+        working-directory: athrill-target-rh850f1x
         run: |
-          sudo apt-get update
-
-      - name: Install dependencies (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew update
-
-      - name: Build athrill
-        run: |
-          bash ./build.bash all
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+          cmake --build build --parallel
+          ctest --test-dir build --output-on-failure
