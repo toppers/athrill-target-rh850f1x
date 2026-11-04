@@ -39,6 +39,12 @@ Set `ATHRILL_SOURCE_DIR` if the core is elsewhere. The Business Pack build entry
 
 Hakoniwa CAN transport is optional and defaults off. Enable it with `-DRH850_ENABLE_HAKO_CAN=ON -DATHRILL_ENABLE_HAKONIWA=ON`; the core's Hakoniwa PDU definition must provision all configured CAN channels. `HAKONIWA_PDU_REGISTRY_DIR` selects the sibling PDU registry checkout.
 
+## Release
+
+The target version is set in `project(VERSION)` of `CMakeLists.txt`; `athrill3` reports it as `TARGET:`.
+To change it, run `sh tools/set-version.sh X.Y.Z`, which also updates `MANIFEST` and the fallback in `src/cpu/target_cpu.h`, commit, and push the tag `vX.Y.Z` (or `RC<n>-vX.Y.Z` for a candidate).
+The package build stops if the tag and the version in the tree differ (`tools/check-version.sh`).
+
 ## License
 
 Distributed under the [TOPPERS License](https://toppers.jp/en/license.html).

@@ -65,6 +65,9 @@ add_library(rh850_build_config INTERFACE)
 target_compile_definitions(rh850_build_config INTERFACE
     DISABLE_MEMPROTECT CPU_CONFIG_MEMORY_PROTECTION_ENABLE CPUEMU_CLOCK_BUG_FIX
     FIX_INTR_CPU_RCV_CLR USER_INTR_PMR_BUGFIX)
+# The target version shown by athrill3 comes from project(VERSION).
+target_compile_definitions(rh850_build_config INTERFACE
+    ATHRILL_TARGET_VERSION="${PROJECT_VERSION}")
 if(ATHRILL_ENABLE_EXDEV)
     target_compile_definitions(rh850_build_config INTERFACE EXDEV_ENABLE)
 endif()

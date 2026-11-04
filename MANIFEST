@@ -4,7 +4,9 @@ VERSION 1.0.0
 CMakeLists.txt
 CMakePresets.json
 hakoniwa-build.yaml
+tools/check-version.sh
 tools/hako.py
+tools/set-version.sh
 E_PACKAGE
 LICENSE.md
 MANIFEST
