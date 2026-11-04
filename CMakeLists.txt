@@ -121,11 +121,18 @@ add_executable(athrill3 ${ATHRILL_MAIN_ENTRY_SOURCE})
 target_include_directories(athrill3 PRIVATE "${ATHRILL_SRC_DIR}" "${ATHRILL_SRC_DIR}/lib/dwarf" "${ATHRILL_SRC_DIR}/bus" "${ATHRILL_SRC_DIR}/cpu" "${ATHRILL_SRC_DIR}/device/mpu" "${ATHRILL_SRC_DIR}/debugger/interaction" "${ATHRILL_SRC_DIR}/debugger/interaction/inc" "${ATHRILL_SRC_DIR}/debugger/executor" "${ATHRILL_SRC_DIR}/main" "${ATHRILL_TARGET_SOURCE_DIR}/cpu" "${ATHRILL_TARGET_SOURCE_DIR}/cpu/config" "${ATHRILL_TARGET_SOURCE_DIR}/debugger/interaction/inc")
 athrill_rh850_configure_target(athrill3)
 # The static libraries call each other in both directions (mpu -> loader,
-# device -> cpu, ...); a rescanned link group resolves them on GNU ld.
-string(REPLACE ";" "," _athrill_link_group
-    "athrill_main;athrill_cui;athrill_rh850_cpu;athrill_rh850_device;athrill_rh850_can;athrill_bus;athrill_loader;athrill_mpu;athrill_std;${_optional_libraries}")
-string(REGEX REPLACE ",$" "" _athrill_link_group "${_athrill_link_group}")
-target_link_libraries(athrill3 PRIVATE "$<LINK_GROUP:RESCAN,${_athrill_link_group}>")
+# device -> cpu, ...).  GNU ld needs them in a rescanned link group; the
+# Apple and MSVC linkers resolve them in any order (and CMake rejects RESCAN
+# for AppleClang C++ links).
+set(_athrill_static_libraries
+    athrill_main athrill_cui athrill_rh850_cpu athrill_rh850_device athrill_rh850_can
+    athrill_bus athrill_loader athrill_mpu athrill_std ${_optional_libraries})
+if(NOT APPLE AND NOT WIN32)
+    list(JOIN _athrill_static_libraries "," _athrill_link_group)
+    target_link_libraries(athrill3 PRIVATE "$<LINK_GROUP:RESCAN,${_athrill_link_group}>")
+else()
+    target_link_libraries(athrill3 PRIVATE ${_athrill_static_libraries})
+endif()
 if(ATHRILL_HAKONIWA_RPATH)
     set_target_properties(athrill3 PROPERTIES BUILD_RPATH "${ATHRILL_HAKONIWA_RPATH}" INSTALL_RPATH "${ATHRILL_HAKONIWA_RPATH}")
 endif()
