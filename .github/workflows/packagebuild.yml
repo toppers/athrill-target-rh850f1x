@@ -41,6 +41,9 @@ jobs:
           cmake --build build --parallel
           ctest --test-dir build --output-on-failure
           cmake --install build --prefix .
+          # makerelease cannot read files above the package directory, so the
+          # sibling Athrill checkout is linked in and packaged as athrill/.
+          ln -s ../athrill athrill
           git clone https://github.com/mitsut/toppers_utils.git
           perl toppers_utils/makerelease E_PACKAGE
           cd RELEASE
