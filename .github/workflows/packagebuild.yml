@@ -17,14 +17,22 @@ jobs:
           path: athrill-target-rh850f1x
           fetch-depth: 0
 
-      - name: Select Athrill branch
+      # The Athrill core is pinned to the commit of tag v3.0.0, as in
+      # .devcontainer/post-create.sh. A toppers/athrill branch with the same
+      # name as this branch, if any, is used instead for joint changes.
+      - name: Select Athrill core
         id: athrill_ref
+        env:
+          ATHRILL_TAG: v3.0.0
+          ATHRILL_COMMIT: 29ff9174d6c48de9dcbcd581a36a6b24904d91b4
         run: |
           BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
-          if git ls-remote --exit-code --heads https://github.com/toppers/athrill.git "$BRANCH" >/dev/null; then
+          if [ "$GITHUB_REF_TYPE" = branch ] && git ls-remote --exit-code --heads https://github.com/toppers/athrill.git "$BRANCH" >/dev/null; then
             echo "ref=$BRANCH" >> "$GITHUB_OUTPUT"
+            echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
           else
-            echo "ref=cpp" >> "$GITHUB_OUTPUT"
+            echo "ref=$ATHRILL_COMMIT" >> "$GITHUB_OUTPUT"
+            echo "name=$ATHRILL_TAG" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Checkout Athrill
@@ -52,7 +60,7 @@ jobs:
       - name: Write release notes
         working-directory: athrill-target-rh850f1x
         env:
-          ATHRILL_REF: ${{ steps.athrill_ref.outputs.ref }}
+          ATHRILL_REF: ${{ steps.athrill_ref.outputs.name }}
         run: |
           PREVIOUS_TAG=$(git tag --sort=-creatordate | sed -n 2p)
           {
