@@ -1,6 +1,6 @@
 # athrill-target-rh850f1x
 
-![build](https://github.com/toppers/athrill-target-rh850f1x/actions/workflows/build.yml/badge.svg?branch=cpp)
+![build](https://github.com/toppers/athrill-target-rh850f1x/actions/workflows/build.yml/badge.svg)
 
 RH850F1x target for [Athrill](https://github.com/toppers/athrill).
 
