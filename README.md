@@ -4,7 +4,7 @@
 
 RH850F1x target for [Athrill](https://github.com/toppers/athrill).
 
-This `cpp` branch builds `athrill3` with CMake on the `toppers/athrill` core (v1.2.0 or later).
+This `cpp` branch builds `athrill3` with CMake on the `toppers/athrill` core (v3.0.0 or later).
 The `master` branch keeps the earlier Makefile-based releases (v0.A.x, `athrill2`).
 
 ## Supported targets
@@ -19,12 +19,12 @@ The `master` branch keeps the earlier Makefile-based releases (v0.A.x, `athrill2
 
 - CMake 3.25 or later
 - A C and C++17 compiler (tested with GCC 13 on Ubuntu 24.04)
-- The `toppers/athrill` core v1.2.0 or later (configure warns about an older core); the devcontainer uses v3.0.0
+- The `toppers/athrill` core v3.0.0 or later (configure warns about an older core)
 - Optional: Python 3 for `tools/hako.py`, and hakoniwa-core-pro and hakoniwa-pdu-registry for Hakoniwa CAN
 
 ## Build
 
-Check out this repository beside the `toppers/athrill` core checkout (v1.2.0 or later, here v3.0.0):
+Check out this repository beside the `toppers/athrill` core checkout (v3.0.0 or later):
 
 ```sh
 git clone -b v3.0.0 https://github.com/toppers/athrill.git

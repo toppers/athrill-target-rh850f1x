@@ -14,7 +14,7 @@ include("${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
 # Athrill core version check.  The core does not export its version to CMake
 # yet, so read ATHRILL_CORE_VERSION from its entry source unless
 # AthrillCore.cmake already defines it.
-set(RH850_MIN_ATHRILL_CORE_VERSION "1.2.0"
+set(RH850_MIN_ATHRILL_CORE_VERSION "3.0.0"
     CACHE STRING "Oldest Athrill core version this target is tested with")
 if(NOT DEFINED ATHRILL_CORE_VERSION)
     foreach(_athrill_entry "${ATHRILL_SRC_DIR}/main/main.cpp" "${ATHRILL_SRC_DIR}/main/main.c")
