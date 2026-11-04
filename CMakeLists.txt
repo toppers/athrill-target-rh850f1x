@@ -10,6 +10,39 @@ if(NOT EXISTS "${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
     message(FATAL_ERROR "Athrill core not found at ${ATHRILL_SOURCE_DIR}; set ATHRILL_SOURCE_DIR to the sibling core checkout")
 endif()
 include("${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
+
+# Athrill core version check.  The core does not export its version to CMake
+# yet, so read ATHRILL_CORE_VERSION from its entry source unless
+# AthrillCore.cmake already defines it.
+set(RH850_MIN_ATHRILL_CORE_VERSION "1.2.0"
+    CACHE STRING "Oldest Athrill core version this target is tested with")
+if(NOT DEFINED ATHRILL_CORE_VERSION)
+    foreach(_athrill_entry "${ATHRILL_SRC_DIR}/main/main.cpp" "${ATHRILL_SRC_DIR}/main/main.c")
+        if(EXISTS "${_athrill_entry}")
+            file(STRINGS "${_athrill_entry}" _athrill_version_line
+                REGEX "^#define[ \t]+ATHRILL_CORE_VERSION[ \t]+\"[0-9.]+\"")
+            if(_athrill_version_line)
+                string(REGEX REPLACE ".*\"([0-9.]+)\".*" "\\1"
+                    ATHRILL_CORE_VERSION "${_athrill_version_line}")
+                break()
+            endif()
+        endif()
+    endforeach()
+endif()
+if(NOT ATHRILL_CORE_VERSION)
+    message(WARNING "Athrill core version not found in ${ATHRILL_SOURCE_DIR}")
+elseif(ATHRILL_CORE_VERSION VERSION_LESS RH850_MIN_ATHRILL_CORE_VERSION)
+    message(WARNING
+        "Athrill core ${ATHRILL_CORE_VERSION} at ${ATHRILL_SOURCE_DIR} is older than "
+        "${RH850_MIN_ATHRILL_CORE_VERSION}, the oldest version this target is tested with.")
+endif()
+# The cpp-branch API this target builds on (C++ entry point, address width).
+if(NOT DEFINED ATHRILL_MAIN_ENTRY_SOURCE OR NOT DEFINED ATHRILL_ADDRESS_WIDTH)
+    message(FATAL_ERROR
+        "The Athrill core at ${ATHRILL_SOURCE_DIR} lacks the cpp-branch CMake API "
+        "(ATHRILL_MAIN_ENTRY_SOURCE, ATHRILL_ADDRESS_WIDTH). "
+        "Check out toppers/athrill branch cpp there.")
+endif()
 set(ATHRILL_TARGET_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 option(ATHRILL_ENABLE_EXDEV "Enable external device loading" ON)
@@ -172,6 +205,7 @@ if(BUILD_TESTING)
     endif()
 endif()
 message(STATUS "Athrill source: ${ATHRILL_ROOT}")
+message(STATUS "Athrill core version: ${ATHRILL_CORE_VERSION} (minimum ${RH850_MIN_ATHRILL_CORE_VERSION})")
 message(STATUS "Athrill target: RH850F1X")
 message(STATUS "Athrill EXDEV: ${ATHRILL_ENABLE_EXDEV}")
 message(STATUS "Athrill mROS: ${ATHRILL_ENABLE_MROS}")
