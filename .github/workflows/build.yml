@@ -6,34 +6,32 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout Repository (with submodules)
+      - name: Checkout target
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          submodules: recursive   # ← git clone --recursive 相当
+          path: athrill-target-rh850f1x
 
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.14
+      # The Athrill core is pinned to the commit of tag v3.0.0, as in
+      # .devcontainer/post-create.sh. (A same-name core branch is not used:
+      # this branch is named cpp, and so is the core's development branch.)
+      - name: Select Athrill core
+        id: athrill_ref
+        run: |
+          echo "ref=29ff9174d6c48de9dcbcd581a36a6b24904d91b4" >> "$GITHUB_OUTPUT"
+          echo "name=v3.0.0" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout Athrill
+        uses: actions/checkout@v4
         with:
-          cmake-version: '3.22.x'
+          repository: toppers/athrill
+          ref: ${{ steps.athrill_ref.outputs.ref }}
+          path: athrill
 
-      - name: Install dependencies (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Build and test
+        working-directory: athrill-target-rh850f1x
         run: |
-          sudo apt-get update
-
-      - name: Install dependencies (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew update
-
-      - name: Build athrill
-        run: |
-          bash ./build.bash all
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+          cmake --build build --parallel
+          ctest --test-dir build --output-on-failure

@@ -81,6 +81,8 @@ static DeviceExSerialOpType device_ex_serial_tcp_op = {
 		.flush = NULL,
 };
 
+static DeviceExSerialOpType *device_serial_ch1_ops = NULL;
+
 static void device_serial_init(CpuType *cpu, DeviceClockType *dev_clock)
 {
 	Std_ReturnType ret;
@@ -90,12 +92,14 @@ static void device_serial_init(CpuType *cpu, DeviceClockType *dev_clock)
 	device_init_serial(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_SERIAL]);
 	ret = cpuemu_get_devcfg_value("DEVICE_CONFIG_SERIAL_CH1_SERVER_PORTNO", &value);
 	if (ret != STD_E_OK) {
-		device_ex_serial_register_ops(1U, &device_ex_serial_op);
+		device_serial_ch1_ops = &device_ex_serial_op;
+		device_ex_serial_register_ops(1U, device_serial_ch1_ops);
 	}
 	else {
 		ret = dbg_serial_init_tcp(2U);
 		ASSERT(ret == STD_E_OK);
-		device_ex_serial_register_ops(1U, &device_ex_serial_tcp_op);
+		device_serial_ch1_ops = &device_ex_serial_tcp_op;
+		device_ex_serial_register_ops(1U, device_serial_ch1_ops);
 		printf("device_serial_init: server-portno=%u\n", value);
 		ret = dbg_serial_open_tcp(1U, value);
 		ASSERT(ret == STD_E_OK);
@@ -132,6 +136,30 @@ void device_init(CpuType *cpu, DeviceClockType *dev_clock)
 #ifdef EXDEV_ENABLE
 	device_init_athrill_exdev();
 #endif /* EXDEV_ENABLE */
+	return;
+}
+
+void device_reset(CpuType *cpu, DeviceClockType *dev_clock)
+{
+	/*
+	 * Called by the core's cpuemu_reset() (Hakoniwa reset).  Reset only the
+	 * emulated state; the serial TCP server, CAN, serial FIFO and external
+	 * devices opened by device_init() live for the whole process.
+	 */
+	dev_clock->clock = 0;
+	dev_clock->intclock = 0;
+	dev_clock->min_intr_interval = DEVICE_CLOCK_MAX_INTERVAL;
+	dev_clock->can_skip_clock = FALSE;
+	dev_clock->is_halt = FALSE;
+
+	device_init_clock(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_CLOCK]);
+	device_init_intc(cpu, &mpu_address_map.map[MPU_ADDRESS_REGION_INX_INTC1]);
+	device_init_timer(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_TIMER]);
+	/* device_init_serial() clears the per-channel operations. */
+	device_init_serial(&mpu_address_map.map[MPU_ADDRESS_REGION_INX_SERIAL]);
+	if (device_serial_ch1_ops != NULL) {
+		device_ex_serial_register_ops(1U, device_serial_ch1_ops);
+	}
 	return;
 }
 

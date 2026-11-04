@@ -1,0 +1,30 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {"major": 3, "minor": 25, "patch": 0},
+  "configurePresets": [
+    {
+      "name": "macos-native",
+      "displayName": "macOS arm64 Ninja",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"},
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Release", "BUILD_TESTING": "ON", "RH850_ENABLE_HAKO_CAN": "OFF"}
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Linux release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux"},
+      "cacheVariables": {"CMAKE_BUILD_TYPE": "Release", "BUILD_TESTING": "ON", "RH850_ENABLE_HAKO_CAN": "OFF"}
+    }
+  ],
+  "buildPresets": [
+    {"name": "macos-native", "configurePreset": "macos-native"},
+    {"name": "linux-release", "configurePreset": "linux-release"}
+  ],
+  "testPresets": [
+    {"name": "macos-native", "configurePreset": "macos-native", "output": {"outputOnFailure": true}},
+    {"name": "linux-release", "configurePreset": "linux-release", "output": {"outputOnFailure": true}}
+  ]
+}

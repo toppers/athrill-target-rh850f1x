@@ -1,6 +1,9 @@
 *.o
 *.a
-athrill2
+athrill3
 RELEASE/
 toppers_utils/
 build/
+cmake-build/
+bin/
+.hako/
