@@ -3,7 +3,7 @@
 #include "canbus/can_bus.h"
 #include "cpuemu_ops.h"
 #include "mpu_ops.h"
-#include "hako_client.h"
+#include "hakoniwa_asset_polling.h"
 #include "can_msgs/pdu_ctype_HakoCan.h"
 #include <string.h>
 
@@ -149,10 +149,7 @@ static void device_parse_can_config(HakoTopicType type, const char* fmt_num, con
 			if (n != 6U) {
 				printf("ERROR: can not parse param(%s). format:channel<ch>/CAN_IDE<ide>_RTR<rtr>_DLC<dlc>_<canid>\n", param_value);
 			}
-			err = hako_client_create_pdu_lchannel(hako_robot_name, can_bus_hako_pub_topic[i].pdu_channel, sizeof(Hako_HakoCan));
-			if (err != 0) {
-				printf("ERROR: can not create pdu channel: %d\n", can_bus_hako_pub_topic[i].cid);
-			}
+			/* The core's PDU definition provisions this channel on its asset. */
 		}
 		else {
 			int n = sscanf(param_value, "channel%u/CAN_IDE%u_RTR%u_DLC%u_0x%x/%d",
@@ -172,40 +169,34 @@ static void device_parse_can_config(HakoTopicType type, const char* fmt_num, con
 
 static void can_bus_operation_impl_hako_init(void)
 {
-	int err;
-
 	(void)cpuemu_get_devcfg_string("DEBUG_FUNC_HAKO_ASSET_NAME", &hako_asset_name);
 	(void)cpuemu_get_devcfg_string("DEBUG_FUNC_HAKO_ROBOT_NAME", &hako_robot_name);
-	err = hako_client_init(hako_asset_name);
-	if (err != 0) {
-		printf("ERROR: hako_client_init() error=%d\n", err);
-		exit(1);
-	}
 
 	(void)cpuemu_get_devcfg_value("DEBUG_FUNC_CAN_RX_QUEUE_SIZE ", &rx_queue_max);
 	can_bus_hako_rx_buffer_init();
 
 	device_parse_can_config(HakoTopicType_PUB, "DEBUG_FUNC_HAKO_PUB_NUM", "DEBUG_FUNC_HAKO_PUB_%d");
 	device_parse_can_config(HakoTopicType_SUB, "DEBUG_FUNC_HAKO_SUB_NUM", "DEBUG_FUNC_HAKO_SUB_%d");
-	(void)hako_client_start_feedback();
+	/* Asset initialization, registration, and lifecycle feedback belong to
+	 * Athrill's lockstep implementation; CAN only accesses its PDU channels. */
 	return;
 }
 
 static bool can_bus_operation_impl_hako_rx_is_arrived(CanChannelIdType cid)
 {
-	if (   (hako_client_is_pdu_created() == 0) 
-		&& (hako_client_is_simulation_mode() == 0)
+	if (   (hakoniwa_asset_is_pdu_created() != 0) 
+		&& (hakoniwa_asset_is_simulation_mode() != 0)
 		) {
 		int i;
 		for (i = 0; i < hako_sub_req_num; i++) {
 			if (can_bus_hako_sub_topic[i].cid != cid) {
 				continue;
 			}
-			else if (hako_client_pdu_is_dirty(hako_asset_name, hako_robot_name, can_bus_hako_sub_topic[i].pdu_channel) != 0) {
+			else if (hakoniwa_asset_is_pdu_dirty(hako_asset_name, hako_robot_name, can_bus_hako_sub_topic[i].pdu_channel) == 0) {
 				continue;
 			}
 			Hako_HakoCan can_msg;
-			if (hako_client_read_pdu(hako_asset_name, hako_robot_name, can_bus_hako_sub_topic[i].pdu_channel, (char *)&can_msg, sizeof(Hako_HakoCan)) == 0) {
+			if (hakoniwa_asset_read_pdu(hako_asset_name, hako_robot_name, can_bus_hako_sub_topic[i].pdu_channel, (char *)&can_msg, sizeof(Hako_HakoCan)) == 0) {
 				CanDataType data;
 				data.rtr = can_msg.head.rtr;
 				data.ide = can_msg.head.ide;
@@ -215,10 +206,10 @@ static bool can_bus_operation_impl_hako_rx_is_arrived(CanChannelIdType cid)
 				can_bus_hako_rx_buffer_put(cid, &data);
 			}
 		}
-		hako_client_notify_read_pdu_done(hako_asset_name);
+		hakoniwa_asset_notify_read_pdu_done(hako_asset_name);
 	}
-	else if (hako_client_is_pdu_sync_mode(hako_asset_name) == 0) {
-		hako_client_notify_write_pdu_done(hako_asset_name);
+	else if (hakoniwa_asset_is_pdu_sync_mode(hako_asset_name) != 0) {
+		hakoniwa_asset_notify_write_pdu_done(hako_asset_name);
 	}
 	return can_bus_hako_rx_is_arrived(cid);
 }
@@ -252,7 +243,7 @@ static Std_ReturnType can_bus_operation_impl_hako_tx_start_send(CanChannelIdType
 		printf("ERROR: ROS Unknown can data send(ide=%u rtr=%u dlc=%u id=0x%x\n", data->ide, data->rtr, data->dlc, data->id);
 		return STD_E_NOENT;
 	}
-	if ((hako_client_is_simulation_mode() == 0) || (hako_client_is_pdu_sync_mode(hako_asset_name) == 0)) {
+	if ((hakoniwa_asset_is_simulation_mode() != 0) || (hakoniwa_asset_is_pdu_sync_mode(hako_asset_name) != 0)) {
 		Hako_HakoCan can_msg;
 		can_msg.head.rtr = data->rtr;
 		can_msg.head.ide = data->ide;
@@ -263,11 +254,11 @@ static Std_ReturnType can_bus_operation_impl_hako_tx_start_send(CanChannelIdType
 		for (j = 0; j < 8; j++) {
 			can_msg.body.data[j] = data->data[j];
 		}
-		int err = hako_client_write_pdu(hako_asset_name, hako_robot_name, can_bus_hako_pub_topic[i].pdu_channel, (const char*)&can_msg, sizeof(Hako_HakoCan));
+		int err = hakoniwa_asset_write_pdu(hako_asset_name, hako_robot_name, can_bus_hako_pub_topic[i].pdu_channel, (const char*)&can_msg, sizeof(Hako_HakoCan));
 		if (err != 0) {
-			printf("ERROR: hako_client_write_pdu() error\n");
+			printf("ERROR: hakoniwa_asset_write_pdu() error\n");
 		}
-		hako_client_notify_write_pdu_done(hako_asset_name);
+		hakoniwa_asset_notify_write_pdu_done(hako_asset_name);
 	}
 	return STD_E_OK;
 }
