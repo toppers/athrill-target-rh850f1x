@@ -1,13 +1,15 @@
 {
-	"name": "Hakoniwa Base Development",
+	"name": "Athrill RH850F1x",
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": {
-			"UBUNTU_VERSION": "22.04"
+			"UBUNTU_VERSION": "24.04"
 		}
 	},
 	"features": {
 	},
+	// The Athrill core is a sibling checkout (../athrill, branch cpp).
+	"postCreateCommand": "bash .devcontainer/post-create.sh",
 	"customizations": {
 		"vscode": {
 			"extensions": [
