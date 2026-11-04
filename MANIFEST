@@ -6,7 +6,6 @@ CMakePresets.json
 hakoniwa-build.yaml
 tools/hako.py
 E_PACKAGE
-E_PACKAGE.darwin
 LICENSE.md
 MANIFEST
 README.md
