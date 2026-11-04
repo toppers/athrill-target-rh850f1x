@@ -1,6 +1,3 @@
-[submodule "athrill"]
-	path = athrill
-	url = https://github.com/toppers/athrill.git
 [submodule "hakoniwa-core-cpp-client"]
 	path = hakoniwa-core-cpp-client
 	url = https://github.com/toppers/hakoniwa-core-cpp-client.git

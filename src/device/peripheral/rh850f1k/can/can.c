@@ -97,9 +97,12 @@ static uint32 can_clock_fd = 50000;
 
 void device_init_can(MpuAddressRegionType *region)
 {
+	int ret = STD_E_NOENT;
+#ifdef RH850_ENABLE_HAKO_CAN
 	char *asset_name = NULL;
+	ret = cpuemu_get_devcfg_string("DEBUG_FUNC_HAKO_ASSET_NAME", &asset_name);
+#endif
 	(void)cpuemu_get_devcfg_value("DEVICE_CONFIG_CAN_FD", &can_clock_fd);
-	int ret = cpuemu_get_devcfg_string("DEBUG_FUNC_HAKO_ASSET_NAME", &asset_name);
 
 	can_reset();
 	if (ret == STD_E_NOENT) {
@@ -108,9 +111,15 @@ void device_init_can(MpuAddressRegionType *region)
 		can_bus_operation_impl_ros.init();
 	}
 	else {
+#ifdef RH850_ENABLE_HAKO_CAN
 		can_rx_init(&can_bus_operation_impl_hako);
 		can_tx_init(&can_bus_operation_impl_hako);
 		can_bus_operation_impl_hako.init();
+#else
+		can_rx_init(&can_bus_operation_impl_ros);
+		can_tx_init(&can_bus_operation_impl_ros);
+		can_bus_operation_impl_ros.init();
+#endif
 	}
 
 	return;
