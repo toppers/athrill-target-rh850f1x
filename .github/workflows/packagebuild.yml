@@ -17,6 +17,10 @@ jobs:
           path: athrill-target-rh850f1x
           fetch-depth: 0
 
+      - name: Check the tag against the target version
+        working-directory: athrill-target-rh850f1x
+        run: sh tools/check-version.sh "${GITHUB_REF_NAME}"
+
       # The Athrill core is pinned to the commit of tag v3.0.0, as in
       # .devcontainer/post-create.sh. (A same-name core branch is not used:
       # this branch is named cpp, and so is the core's development branch.)
