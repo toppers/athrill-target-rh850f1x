@@ -9,8 +9,19 @@ get_filename_component(ATHRILL_SOURCE_DIR "${ATHRILL_SOURCE_DIR}" ABSOLUTE BASE_
 if(NOT EXISTS "${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
     message(FATAL_ERROR "Athrill core not found at ${ATHRILL_SOURCE_DIR}; set ATHRILL_SOURCE_DIR to the sibling core checkout")
 endif()
-option(ATHRILL_ENABLE_GDB_RSP "Enable GDB RSP support for the RH850 target" ON)
+if(WIN32 OR NOT UNIX)
+    set(_rh850_gdb_rsp_default OFF)
+else()
+    set(_rh850_gdb_rsp_default ON)
+endif()
+option(ATHRILL_ENABLE_GDB_RSP "Enable GDB RSP support for the RH850 target" ${_rh850_gdb_rsp_default})
+unset(_rh850_gdb_rsp_default)
 include("${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
+if(ATHRILL_ENABLE_GDB_RSP AND NOT EXISTS "${ATHRILL_SRC_DIR}/debugger/rsp/gdb_rsp_target.h")
+    message(FATAL_ERROR
+        "ATHRILL_ENABLE_GDB_RSP requires an Athrill core checkout with "
+        "src/debugger/rsp/gdb_rsp_target.h; set ATHRILL_ENABLE_GDB_RSP=OFF or update the core checkout")
+endif()
 
 # Athrill core version check.  The core does not export its version to CMake
 # yet, so read ATHRILL_CORE_VERSION from its entry source unless

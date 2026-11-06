@@ -40,7 +40,9 @@
  *  $Id$
  */
 #include "concrete_executor/target/dbg_target_cpu.h"
+#ifdef ATHRILL_ENABLE_GDB_RSP
 #include "debugger/rsp/gdb_rsp_target.h"
+#endif
 #include "cpu.h"
 #include "symbol_ops.h"
 
@@ -50,6 +52,7 @@
 #include "target_mpu_op.h"
 
 /* GDB RSP register image: r0-r31, SEL0 registers, then PC. */
+#ifdef ATHRILL_ENABLE_GDB_RSP
 #define ATHRILL_GDB_REG_COUNT 406U
 
 void dbg_target_gdb_set_pc(uint32 core_id, uint32 pc)
@@ -98,6 +101,7 @@ std_bool dbg_target_gdb_write_reg(uint32 core_id, uint32 regno, const uint8 *byt
 	memcpy(value_ptr, &value, sizeof(value));
 	return TRUE;
 }
+#endif /* ATHRILL_ENABLE_GDB_RSP */
 
 static void print_register(const char* regname, uint32 addr, char* opt)
 {
