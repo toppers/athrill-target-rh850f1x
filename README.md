@@ -45,6 +45,8 @@ The `codex/gdb-rsp-*` prototype branches add a localhost-only GDB Remote Serial 
 
 In this prototype, GDB `detach` (`D`) leaves Athrill paused and the RSP server waiting for another client. GDB `kill` (`k`) exits Athrill.
 
+GDB memory reads use Athrill's normal bus read path. Reading memory mapped device registers can therefore have the same side effects as a target CPU read; inspect RAM/ROM while debugging device state through the peripheral's supported interface.
+
 ## Release
 
 The target version is set in `project(VERSION)` of `CMakeLists.txt`; `athrill3` reports it as `TARGET:`.
