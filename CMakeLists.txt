@@ -9,24 +9,35 @@ get_filename_component(ATHRILL_SOURCE_DIR "${ATHRILL_SOURCE_DIR}" ABSOLUTE BASE_
 if(NOT EXISTS "${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
     message(FATAL_ERROR "Athrill core not found at ${ATHRILL_SOURCE_DIR}; set ATHRILL_SOURCE_DIR to the sibling core checkout")
 endif()
+set(_rh850_gdb_rsp_api "${ATHRILL_SOURCE_DIR}/src/debugger/rsp/gdb_rsp_target.h")
 if(WIN32 OR NOT UNIX)
     set(_rh850_gdb_rsp_default OFF)
-else()
+elseif(EXISTS "${_rh850_gdb_rsp_api}")
     set(_rh850_gdb_rsp_default ON)
+else()
+    set(_rh850_gdb_rsp_default OFF)
 endif()
 option(ATHRILL_ENABLE_GDB_RSP "Enable GDB RSP support for the RH850 target" ${_rh850_gdb_rsp_default})
 unset(_rh850_gdb_rsp_default)
+unset(_rh850_gdb_rsp_api)
 if(ATHRILL_ENABLE_GDB_RSP AND (WIN32 OR NOT UNIX))
     message(FATAL_ERROR
         "GDB RSP is not supported by the RH850 target on this host; "
         "configure with -DATHRILL_ENABLE_GDB_RSP=OFF")
 endif()
-include("${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
-if(ATHRILL_ENABLE_GDB_RSP AND NOT EXISTS "${ATHRILL_SRC_DIR}/debugger/rsp/gdb_rsp_target.h")
+if(ATHRILL_ENABLE_GDB_RSP AND NOT EXISTS "${ATHRILL_SOURCE_DIR}/src/debugger/rsp/gdb_rsp_target.h")
     message(FATAL_ERROR
         "ATHRILL_ENABLE_GDB_RSP requires an Athrill core checkout with "
-        "src/debugger/rsp/gdb_rsp_target.h; set ATHRILL_ENABLE_GDB_RSP=OFF or update the core checkout")
+        "src/debugger/rsp/gdb_rsp_target.h; update the core checkout or disable GDB RSP")
 endif()
+if(NOT ATHRILL_ENABLE_GDB_RSP)
+    if(WIN32 OR NOT UNIX)
+        message(STATUS "GDB RSP disabled by default: the RH850 target does not support this host")
+    elseif(NOT EXISTS "${ATHRILL_SOURCE_DIR}/src/debugger/rsp/gdb_rsp_target.h")
+        message(STATUS "GDB RSP disabled by default: the selected Athrill core has no GDB RSP target adapter")
+    endif()
+endif()
+include("${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
 
 # Athrill core version check.  The core does not export its version to CMake
 # yet, so read ATHRILL_CORE_VERSION from its entry source unless
