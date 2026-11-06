@@ -9,6 +9,7 @@ get_filename_component(ATHRILL_SOURCE_DIR "${ATHRILL_SOURCE_DIR}" ABSOLUTE BASE_
 if(NOT EXISTS "${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
     message(FATAL_ERROR "Athrill core not found at ${ATHRILL_SOURCE_DIR}; set ATHRILL_SOURCE_DIR to the sibling core checkout")
 endif()
+option(ATHRILL_ENABLE_GDB_RSP "Enable GDB RSP support for the RH850 target" ON)
 include("${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
 
 # Athrill core version check.  The core does not export its version to CMake
