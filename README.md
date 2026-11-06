@@ -42,7 +42,7 @@ Hakoniwa CAN transport is optional and defaults off. Enable it with `-DRH850_ENA
 ## GDB remote debugging
 
 On POSIX hosts, this target enables `ATHRILL_ENABLE_GDB_RSP` by default when the core provides the GDB RSP target
-adapter (introduced by core PR #78 or a later core release). Without that adapter, it defaults OFF. Windows defaults
+adapter (introduced by toppers/athrill#78 or a later core release). Without that adapter, it defaults OFF. Windows defaults
 to OFF. GDB reads the ELF using the `v850e3v5` architecture. The target exposes r0-r31, SEL0 system registers, and
 PC for reading and writing. SEL1 and later banked registers, and VR0-VR31, are reported as unavailable.
 
