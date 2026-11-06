@@ -19,7 +19,7 @@ Releases up to v0.A.2 were built with Makefiles and provided `athrill2`.
 
 - CMake 3.25 or later
 - A C and C++17 compiler (tested with GCC 13 on Ubuntu 24.04)
-- The `toppers/athrill` core v3.0.0 or later (configure warns about an older core)
+- The `toppers/athrill` core v3.0.0 or later (configure warns about an older core); v3.1.0 or later for GDB remote debugging
 - Optional: Python 3 for `tools/hako.py`, and hakoniwa-core-pro and hakoniwa-pdu-registry for Hakoniwa CAN
 
 ## Build
@@ -27,7 +27,7 @@ Releases up to v0.A.2 were built with Makefiles and provided `athrill2`.
 Check out this repository beside the `toppers/athrill` core checkout (v3.0.0 or later):
 
 ```sh
-git clone -b v3.0.0 https://github.com/toppers/athrill.git
+git clone -b v3.1.0 https://github.com/toppers/athrill.git
 git clone https://github.com/toppers/athrill-target-rh850f1x.git
 cd athrill-target-rh850f1x
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -42,7 +42,7 @@ Hakoniwa CAN transport is optional and defaults off. Enable it with `-DRH850_ENA
 ## GDB remote debugging
 
 On POSIX hosts, this target enables `ATHRILL_ENABLE_GDB_RSP` by default when the core provides the GDB RSP target
-adapter (introduced by toppers/athrill#78 or a later core release). Without that adapter, it defaults OFF. Windows defaults
+adapter (core v3.1.0 or later). Without that adapter, it defaults OFF. Windows defaults
 to OFF. GDB reads the ELF using the `v850e3v5` architecture. The target exposes r0-r31, SEL0 system registers, and
 PC for reading and writing. SEL1 and later banked registers, and VR0-VR31, are reported as unavailable.
 
