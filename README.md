@@ -39,6 +39,16 @@ Set `ATHRILL_SOURCE_DIR` if the core is elsewhere. The Business Pack build entry
 
 Hakoniwa CAN transport is optional and defaults off. Enable it with `-DRH850_ENABLE_HAKO_CAN=ON -DATHRILL_ENABLE_HAKONIWA=ON`; the core's Hakoniwa PDU definition must provision all configured CAN channels. `HAKONIWA_PDU_REGISTRY_DIR` selects the sibling PDU registry checkout.
 
+## GDB remote debugging
+
+On POSIX hosts, this target enables `ATHRILL_ENABLE_GDB_RSP` by default when the core provides the GDB RSP target
+adapter (introduced by toppers/athrill#78 or a later core release). Without that adapter, it defaults OFF. Windows defaults
+to OFF. GDB reads the ELF using the `v850e3v5` architecture. The target exposes r0-r31, SEL0 system registers, and
+PC for reading and writing. SEL1 and later banked registers, and VR0-VR31, are reported as unavailable.
+
+GDB setup, connection behavior, and core-side limitations are described in the [Athrill core configuration
+reference](https://github.com/toppers/athrill/blob/master/docs/configuration.md).
+
 ## Release
 
 The target version is set in `project(VERSION)` of `CMakeLists.txt`; `athrill3` reports it as `TARGET:`.
