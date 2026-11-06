@@ -16,6 +16,11 @@ else()
 endif()
 option(ATHRILL_ENABLE_GDB_RSP "Enable GDB RSP support for the RH850 target" ${_rh850_gdb_rsp_default})
 unset(_rh850_gdb_rsp_default)
+if(ATHRILL_ENABLE_GDB_RSP AND (WIN32 OR NOT UNIX))
+    message(FATAL_ERROR
+        "GDB RSP is not supported by the RH850 target on this host; "
+        "configure with -DATHRILL_ENABLE_GDB_RSP=OFF")
+endif()
 include("${ATHRILL_SOURCE_DIR}/cmake/AthrillCore.cmake")
 if(ATHRILL_ENABLE_GDB_RSP AND NOT EXISTS "${ATHRILL_SRC_DIR}/debugger/rsp/gdb_rsp_target.h")
     message(FATAL_ERROR
