@@ -43,6 +43,8 @@ Hakoniwa CAN transport is optional and defaults off. Enable it with `-DRH850_ENA
 
 The `codex/gdb-rsp-*` prototype branches add a localhost-only GDB Remote Serial Protocol server to Athrill core v3.0.0 and this RH850 target. Start the emulator with `-g<port>` (for example, `athrill3 -g1234 app.elf`), then connect from another terminal with `gdb-multiarch app.elf` and `target remote 127.0.0.1:1234`. The initial implementation supports one core, software breakpoints, continue/step, general registers, and memory access. RH850 banked registers and vector registers are currently reported unavailable; validate register numbering against the selected GDB build before relying on symbolic register views.
 
+In this prototype, GDB `detach` (`D`) leaves Athrill paused and the RSP server waiting for another client. GDB `kill` (`k`) exits Athrill.
+
 ## Release
 
 The target version is set in `project(VERSION)` of `CMakeLists.txt`; `athrill3` reports it as `TARGET:`.
