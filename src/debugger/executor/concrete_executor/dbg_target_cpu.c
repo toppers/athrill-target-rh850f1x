@@ -44,8 +44,64 @@
 #include "symbol_ops.h"
 
 #include <stdio.h>
+#include <string.h>
 #include "intc.h"
 #include "target_mpu_op.h"
+
+/* GDB RSP register image: r0-r31, SEL0 registers, then PC. */
+#define ATHRILL_GDB_REG_COUNT 406U
+
+uint32 dbg_target_gdb_pc(uint32 core_id)
+{
+	return virtual_cpu.cores[core_id].core.reg.pc;
+}
+
+void dbg_target_gdb_set_pc(uint32 core_id, uint32 pc)
+{
+	virtual_cpu.cores[core_id].core.reg.pc = pc;
+}
+
+uint32 dbg_target_gdb_reg_count(void)
+{
+	return ATHRILL_GDB_REG_COUNT;
+}
+
+uint32 dbg_target_gdb_reg_size(uint32 regno)
+{
+	return (regno >= 374U) ? 8U : 4U;
+}
+
+static void *gdb_reg_ptr(uint32 core_id, uint32 regno)
+{
+	CpuRegisterType *reg = &virtual_cpu.cores[core_id].core.reg;
+	if (regno < CPU_GREG_NUM) return &reg->r[regno];
+	if (regno < CPU_GREG_NUM + SYS_REG_NUM) return &sys_get_cpu_base(reg)->r[regno - CPU_GREG_NUM];
+	if (regno == CPU_GREG_NUM + SYS_REG_NUM) return &reg->pc;
+	return NULL;
+}
+
+std_bool dbg_target_gdb_read_reg(uint32 core_id, uint32 regno, uint8 *bytes)
+{
+	void *value_ptr = gdb_reg_ptr(core_id, regno);
+	uint32 value;
+	if (value_ptr == NULL) return FALSE;
+	memcpy(&value, value_ptr, sizeof(value));
+	bytes[0] = (uint8)(value & 0xffU);
+	bytes[1] = (uint8)((value >> 8) & 0xffU);
+	bytes[2] = (uint8)((value >> 16) & 0xffU);
+	bytes[3] = (uint8)((value >> 24) & 0xffU);
+	return TRUE;
+}
+
+std_bool dbg_target_gdb_write_reg(uint32 core_id, uint32 regno, const uint8 *bytes)
+{
+	void *value_ptr = gdb_reg_ptr(core_id, regno);
+	uint32 value;
+	if (value_ptr == NULL) return FALSE;
+	value = (uint32)bytes[0] | ((uint32)bytes[1] << 8) | ((uint32)bytes[2] << 16) | ((uint32)bytes[3] << 24);
+	memcpy(value_ptr, &value, sizeof(value));
+	return TRUE;
+}
 
 static void print_register(const char* regname, uint32 addr, char* opt)
 {

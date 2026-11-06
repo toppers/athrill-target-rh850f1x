@@ -39,6 +39,10 @@ Set `ATHRILL_SOURCE_DIR` if the core is elsewhere. The Business Pack build entry
 
 Hakoniwa CAN transport is optional and defaults off. Enable it with `-DRH850_ENABLE_HAKO_CAN=ON -DATHRILL_ENABLE_HAKONIWA=ON`; the core's Hakoniwa PDU definition must provision all configured CAN channels. `HAKONIWA_PDU_REGISTRY_DIR` selects the sibling PDU registry checkout.
 
+## GDB remote debugging prototype
+
+The `codex/gdb-rsp-*` prototype branches add a localhost-only GDB Remote Serial Protocol server to Athrill core v3.0.0 and this RH850 target. Start the emulator with `-g<port>` (for example, `athrill3 -g1234 app.elf`), then connect from another terminal with `gdb-multiarch app.elf` and `target remote 127.0.0.1:1234`. The initial implementation supports one core, software breakpoints, continue/step, general registers, and memory access. RH850 banked registers and vector registers are currently reported unavailable; validate register numbering against the selected GDB build before relying on symbolic register views.
+
 ## Release
 
 The target version is set in `project(VERSION)` of `CMakeLists.txt`; `athrill3` reports it as `TARGET:`.
