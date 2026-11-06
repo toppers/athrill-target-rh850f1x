@@ -40,6 +40,7 @@
  *  $Id$
  */
 #include "concrete_executor/target/dbg_target_cpu.h"
+#include "debugger/rsp/gdb_rsp_target.h"
 #include "cpu.h"
 #include "symbol_ops.h"
 
@@ -50,11 +51,6 @@
 
 /* GDB RSP register image: r0-r31, SEL0 registers, then PC. */
 #define ATHRILL_GDB_REG_COUNT 406U
-
-uint32 dbg_target_gdb_pc(uint32 core_id)
-{
-	return virtual_cpu.cores[core_id].core.reg.pc;
-}
 
 void dbg_target_gdb_set_pc(uint32 core_id, uint32 pc)
 {
