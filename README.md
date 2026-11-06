@@ -27,7 +27,7 @@ Releases up to v0.A.2 were built with Makefiles and provided `athrill2`.
 Check out this repository beside the `toppers/athrill` core checkout (v3.0.0 or later):
 
 ```sh
-git clone https://github.com/toppers/athrill.git
+git clone -b v3.0.0 https://github.com/toppers/athrill.git
 git clone https://github.com/toppers/athrill-target-rh850f1x.git
 cd athrill-target-rh850f1x
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -41,14 +41,13 @@ Hakoniwa CAN transport is optional and defaults off. Enable it with `-DRH850_ENA
 
 ## GDB remote debugging
 
-This target enables `ATHRILL_ENABLE_GDB_RSP` by default on POSIX hosts; the default is OFF on Windows. GDB support
-requires an Athrill core checkout with the GDB RSP target adapter interface. GDB reads the
-ELF using the `v850e3v5` architecture. The target exposes r0-r31, SEL0 system registers, and PC for reading and
-writing. SEL1 and later banked registers, and VR0-VR31, are reported as unavailable.
+On POSIX hosts, this target enables `ATHRILL_ENABLE_GDB_RSP` by default when the core provides the GDB RSP target
+adapter (introduced by core PR #78 or a later core release). Without that adapter, it defaults OFF. Windows defaults
+to OFF. GDB reads the ELF using the `v850e3v5` architecture. The target exposes r0-r31, SEL0 system registers, and
+PC for reading and writing. SEL1 and later banked registers, and VR0-VR31, are reported as unavailable.
 
 GDB setup, connection behavior, and core-side limitations are described in the [Athrill core configuration
-reference](https://github.com/toppers/athrill/blob/master/docs/configuration.md). GDB support requires a core version
-that provides `src/debugger/rsp/gdb_rsp_target.h` and the GDB RSP target adapter interface.
+reference](https://github.com/toppers/athrill/blob/master/docs/configuration.md).
 
 ## Release
 
