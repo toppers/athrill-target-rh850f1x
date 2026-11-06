@@ -27,7 +27,7 @@ Releases up to v0.A.2 were built with Makefiles and provided `athrill2`.
 Check out this repository beside the `toppers/athrill` core checkout (v3.0.0 or later):
 
 ```sh
-git clone -b v3.0.0 https://github.com/toppers/athrill.git
+git clone https://github.com/toppers/athrill.git
 git clone https://github.com/toppers/athrill-target-rh850f1x.git
 cd athrill-target-rh850f1x
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -39,15 +39,16 @@ Set `ATHRILL_SOURCE_DIR` if the core is elsewhere. The Business Pack build entry
 
 Hakoniwa CAN transport is optional and defaults off. Enable it with `-DRH850_ENABLE_HAKO_CAN=ON -DATHRILL_ENABLE_HAKONIWA=ON`; the core's Hakoniwa PDU definition must provision all configured CAN channels. `HAKONIWA_PDU_REGISTRY_DIR` selects the sibling PDU registry checkout.
 
-## GDB remote debugging prototype
+## GDB remote debugging
 
-The `codex/gdb-rsp-*` prototype branches add a localhost-only GDB Remote Serial Protocol server to Athrill core v3.0.0 and this RH850 target. Start the emulator with `-g<port>` (for example, `athrill3 -g1234 app.elf`), then connect from another terminal with `gdb-multiarch app.elf` and `target remote 127.0.0.1:1234`. The initial implementation supports one core, software breakpoints, continue/step, general registers, and memory access. RH850 banked registers and vector registers are currently reported unavailable; validate register numbering against the selected GDB build before relying on symbolic register views.
+This target enables `ATHRILL_ENABLE_GDB_RSP` by default on POSIX hosts; the default is OFF on Windows. GDB support
+requires an Athrill core checkout with the GDB RSP target adapter interface. GDB reads the
+ELF using the `v850e3v5` architecture. The target exposes r0-r31, SEL0 system registers, and PC for reading and
+writing. SEL1 and later banked registers, and VR0-VR31, are reported as unavailable.
 
-This target enables `ATHRILL_ENABLE_GDB_RSP` by default. For build and connection details, including target limitations, see the GDB remote debugging section in the Athrill core README.
-
-In this prototype, GDB `detach` (`D`) leaves Athrill paused and the RSP server waiting for another client. GDB `kill` (`k`) exits Athrill.
-
-GDB memory reads use Athrill's normal bus read path. Reading memory mapped device registers can therefore have the same side effects as a target CPU read; inspect RAM/ROM while debugging device state through the peripheral's supported interface.
+GDB setup, connection behavior, and core-side limitations are described in the [Athrill core configuration
+reference](https://github.com/toppers/athrill/blob/master/docs/configuration.md). GDB support requires a core version
+that provides `src/debugger/rsp/gdb_rsp_target.h` and the GDB RSP target adapter interface.
 
 ## Release
 
