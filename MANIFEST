@@ -1,5 +1,5 @@
 PACKAGE athrill-target-rh850f1x
-VERSION 1.0.0
+VERSION 1.1.0
 
 CMakeLists.txt
 CMakePresets.json
