@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(athrill3 VERSION 1.0.0 LANGUAGES C CXX)
+project(athrill3 VERSION 1.1.0 LANGUAGES C CXX)
 include(GNUInstallDirs)
 include(CTest)
 find_package(Threads REQUIRED)

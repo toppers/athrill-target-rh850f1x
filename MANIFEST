@@ -1,5 +1,5 @@
 PACKAGE athrill-target-rh850f1x
-VERSION 1.0.0
+VERSION 1.1.0
 
 CMakeLists.txt
 CMakePresets.json
@@ -17,6 +17,7 @@ test/argument_parser_test.c
 test/exdev_test_abi.h
 test/exdev_test_device.c
 test/shared_library_test.c
+test/test_hako.py
 
 params/rh850f1k/atk2-sc1/device_config.txt
 params/rh850f1k/atk2-sc1/device_config_with_can.txt

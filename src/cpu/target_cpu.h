@@ -56,7 +56,7 @@
  */
 /* Normally given by CMake from project(VERSION) in CMakeLists.txt. */
 #ifndef ATHRILL_TARGET_VERSION
-#define ATHRILL_TARGET_VERSION "1.0.0"
+#define ATHRILL_TARGET_VERSION "1.1.0"
 #endif
 
 #define CPU_GREG_NUM			(32U)
